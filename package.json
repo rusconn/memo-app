@@ -6,9 +6,11 @@
     "build": "next build",
     "start": "next start",
     "fix": "run-s fix:*",
+    "fix:path": "yarn path",
     "fix:type": "yarn typecheck",
     "fix:lint": "yarn lint --fix",
     "fix:format": "yarn format",
+    "path": "pathpida -o src --ignorePath .gitignore --enableStatic",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --cache",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,json,yml,md}'"
