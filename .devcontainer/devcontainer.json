@@ -20,7 +20,8 @@
     "ms-ceintl.vscode-language-pack-ja",
     "ms-azuretools.vscode-docker",
     "esbenp.prettier-vscode",
-    "artdiniz.quitcontrol-vscode"
+    "artdiniz.quitcontrol-vscode",
+    "bradlc.vscode-tailwindcss"
   ],
   "runServices": ["app"],
   "shutdownAction": "stopCompose"
