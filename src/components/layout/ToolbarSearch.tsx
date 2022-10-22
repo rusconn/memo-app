@@ -1,5 +1,9 @@
-import { ChangeEventHandler, memo, useCallback, useState } from "react";
+import Router, { useRouter } from "next/router";
+import { ChangeEventHandler, memo, useCallback, useEffect, useState } from "react";
 import { TfiSearch } from "react-icons/tfi";
+
+import { pagesPath } from "@/$path";
+import { useClearSelectedMemoId } from "@/contexts";
 
 type Props = {
   value: string;
@@ -24,11 +28,38 @@ const StyledComponent = ({ value, onChange }: Props) => (
 export const Component = memo(StyledComponent);
 
 const Container = () => {
+  const router = useRouter();
   const [value, setValue] = useState("");
+  const [timerId, setTimerId] = useState<number>();
+  const clearSelectedMemoId = useClearSelectedMemoId();
 
-  const onChange: Props["onChange"] = useCallback(({ currentTarget }) => {
-    setValue(currentTarget.value);
-  }, []);
+  const q = (router.query.q ?? "") as string;
+
+  // URL から検索テキストを復元する
+  useEffect(() => {
+    setValue(q);
+  }, [q]);
+
+  const onChange: Props["onChange"] = useCallback(
+    ({ currentTarget }) => {
+      window.clearTimeout(timerId);
+
+      setValue(currentTarget.value);
+
+      const id = window.setTimeout(() => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        Router.push({
+          pathname: pagesPath.$url().pathname,
+          query: { q: currentTarget.value },
+        });
+
+        clearSelectedMemoId();
+      }, 500);
+
+      setTimerId(id);
+    },
+    [timerId, setValue, clearSelectedMemoId]
+  );
 
   return <Component {...{ value, onChange }} />;
 };
