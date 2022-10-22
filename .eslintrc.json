@@ -31,6 +31,8 @@
     "no-console": "off",
     // for of を許可
     "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    // pathpida 由来を許可
+    "no-underscore-dangle": ["error", { "allow": ["_folderId", "_memoId"] }],
     // コンポーネントはアロー関数で書く
     "react/function-component-definition": ["error", { "namedComponents": "arrow-function" }],
     "react/require-default-props": "off"
