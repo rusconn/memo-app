@@ -31,6 +31,8 @@
     "no-console": "off",
     // for of を許可
     "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    // pathpida 由来を許可
+    "no-underscore-dangle": ["error", { "allow": ["_folderId", "_memoId"] }],
     // next/router のメソッドの Promise を無視したい
     "no-void": ["error", { "allowAsStatement": true }],
     // コンポーネントはアロー関数で書く
