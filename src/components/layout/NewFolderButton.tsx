@@ -1,5 +1,9 @@
+import Router from "next/router";
 import { memo, MouseEventHandler, useCallback } from "react";
 import { TfiPlus } from "react-icons/tfi";
+
+import { pagesPath } from "@/$path";
+import { useAddFolder, useStartRenameFolder } from "@/contexts";
 
 type Props = {
   onClick: MouseEventHandler<HTMLButtonElement>;
@@ -19,10 +23,15 @@ const StyledComponent = ({ onClick }: Props) => (
 export const Component = memo(StyledComponent);
 
 const Container = () => {
+  const addFoler = useAddFolder();
+  const startRenameFolder = useStartRenameFolder();
+
   const onClick: Props["onClick"] = useCallback(() => {
-    // eslint-disable-next-line no-alert
-    alert("new folder");
-  }, []);
+    const id = addFoler();
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    Router.push(pagesPath.folders._folderId(id).$url());
+    startRenameFolder(id);
+  }, [addFoler, startRenameFolder]);
 
   return <Component {...{ onClick }} />;
 };
