@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import {
   ComponentProps,
   ForwardedRef,
@@ -10,7 +11,8 @@ import {
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
-import { useStartRenameFolder } from "@/contexts";
+import { pagesPath } from "@/$path";
+import { useDeleteFolder, useStartRenameFolder } from "@/contexts";
 import { clsx } from "@/utils";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 
@@ -64,9 +66,11 @@ const StyledComponent = (
 export const Component = memo(forwardRef(StyledComponent));
 
 const Container = ({ id, editable, current }: ContainerProps) => {
+  const router = useRouter();
   const { value: isOpen, toggle, setFalse: close } = useBoolean(false);
   const ref = useRef<HTMLElement>(null);
   const startRenameFolder = useStartRenameFolder();
+  const deleteFolder = useDeleteFolder();
 
   useOnClickOutside(ref, close);
 
@@ -78,9 +82,14 @@ const Container = ({ id, editable, current }: ContainerProps) => {
   }, [close, startRenameFolder, id]);
 
   const onDeleteClick: Props["onDeleteClick"] = useCallback(() => {
-    // eslint-disable-next-line no-alert
-    alert(id);
-  }, [id]);
+    // 表示中のベージがなくなる場合はトップへ移動する
+    if (router.query.folderId === id) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      router.push(pagesPath.$url()).then(() => deleteFolder(id));
+    } else {
+      deleteFolder(id);
+    }
+  }, [router, deleteFolder, id]);
 
   return (
     <Component

@@ -30,6 +30,8 @@ const AddFolderContext = createContext<() => Folder["id"]>(() => "all");
 
 const RenameFolderContext = createContext<(params: RenameFolderParams) => void>(() => {});
 
+const DeleteFolderContext = createContext<(id: Folder["id"]) => void>(() => {});
+
 export const useFolders = () => useContext(FoldersContext);
 
 export const useSetFolders = () => useContext(SetFoldersContext);
@@ -37,6 +39,8 @@ export const useSetFolders = () => useContext(SetFoldersContext);
 export const useAddFolder = () => useContext(AddFolderContext);
 
 export const useRenameFolder = () => useContext(RenameFolderContext);
+
+export const useDeleteFolder = () => useContext(DeleteFolderContext);
 
 export const FoldersProvider = ({ children }: PropsWithChildren) => {
   const FOLDERS_KEY = "folders";
@@ -103,12 +107,21 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     [setFoldersToUse]
   );
 
+  const deleteFolder = useCallback(
+    (id: Folder["id"]) => {
+      setFoldersToUse(prev => prev.filter(folder => folder.id !== id));
+    },
+    [setFoldersToUse]
+  );
+
   return (
     <FoldersContext.Provider value={folders}>
       <SetFoldersContext.Provider value={setFoldersToUse}>
         <AddFolderContext.Provider value={addFolder}>
           <RenameFolderContext.Provider value={renameFolder}>
-            {children}
+            <DeleteFolderContext.Provider value={deleteFolder}>
+              {children}
+            </DeleteFolderContext.Provider>
           </RenameFolderContext.Provider>
         </AddFolderContext.Provider>
       </SetFoldersContext.Provider>
