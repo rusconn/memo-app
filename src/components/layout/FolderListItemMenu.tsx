@@ -2,6 +2,7 @@ import { ComponentProps, ForwardedRef, forwardRef, memo, useCallback, useRef } f
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
+import { useStartRenameFolder } from "@/contexts";
 import { clsx } from "@/utils";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 
@@ -62,6 +63,7 @@ export const Component = memo(forwardRef(StyledComponent));
 const Container = ({ id, editable, current }: ContainerProps) => {
   const { value: isOpen, toggle, setFalse: close } = useBoolean(false);
   const ref = useRef<HTMLElement>(null);
+  const startRenameFolder = useStartRenameFolder();
 
   useOnClickOutside(ref, close);
 
@@ -70,9 +72,9 @@ const Container = ({ id, editable, current }: ContainerProps) => {
   const onButtonClick: NonNullable<Props["onButtonClick"]> = toggle;
 
   const onRenameClick: NonNullable<Props["onRenameClick"]> = useCallback(() => {
-    // eslint-disable-next-line no-alert
-    alert(id);
-  }, [id]);
+    close();
+    startRenameFolder(id);
+  }, [close, startRenameFolder, id]);
 
   const onDeleteClick: NonNullable<Props["onDeleteClick"]> = useCallback(() => {
     // eslint-disable-next-line no-alert

@@ -1,5 +1,9 @@
+import Router from "next/router";
 import { ComponentProps, memo, useCallback } from "react";
 import { TfiPlus } from "react-icons/tfi";
+
+import { pagesPath } from "@/$path";
+import { useAddFolder, useStartRenameFolder } from "@/contexts";
 
 type Props = {
   label: string;
@@ -19,12 +23,15 @@ const StyledComponent = ({ label, onClick }: Props) => (
 export const Component = memo(StyledComponent);
 
 const Container = () => {
+  const addFolder = useAddFolder();
+  const startRenameFolder = useStartRenameFolder();
+
   const label = "新規フォルダ";
 
   const onClick: NonNullable<Props["onClick"]> = useCallback(() => {
-    // eslint-disable-next-line no-alert
-    alert("new folder");
-  }, []);
+    const id = addFolder();
+    void Router.push(pagesPath.folders._folderId(id).$url()).then(() => startRenameFolder(id));
+  }, [addFolder, startRenameFolder]);
 
   return <Component {...{ label, onClick }} />;
 };

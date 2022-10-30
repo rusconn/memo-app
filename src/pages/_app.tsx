@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 
 import { Layout } from "@/components/layout";
-import { FoldersProvider, SelectedMemoIdProvider } from "@/contexts";
+import { FoldersProvider, RenameFolderIdProvider, SelectedMemoIdProvider } from "@/contexts";
 
 const MyApp = ({ Component, pageProps }: AppProps) => (
   <>
@@ -12,12 +12,14 @@ const MyApp = ({ Component, pageProps }: AppProps) => (
       <title>メモアプリ</title>
     </Head>
     <FoldersProvider>
-      <SelectedMemoIdProvider>
-        <Layout>
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-          <Component {...pageProps} />
-        </Layout>
-      </SelectedMemoIdProvider>
+      <RenameFolderIdProvider>
+        <SelectedMemoIdProvider>
+          <Layout>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+            <Component {...pageProps} />
+          </Layout>
+        </SelectedMemoIdProvider>
+      </RenameFolderIdProvider>
     </FoldersProvider>
   </>
 );
