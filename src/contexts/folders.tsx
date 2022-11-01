@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-import { Folder } from "./types";
+import { Folder, Memo } from "./types";
 
 type RenameFolderParams = Pick<Folder, "id" | "name">;
 
@@ -32,6 +32,8 @@ const RenameFolderContext = createContext<(params: RenameFolderParams) => void>(
 
 const DeleteFolderContext = createContext<(id: Folder["id"]) => void>(() => {});
 
+const AddMemoContext = createContext<(id: Folder["id"]) => Memo["id"]>(() => "");
+
 export const useFolders = () => useContext(FoldersContext);
 
 export const useSetFolders = () => useContext(SetFoldersContext);
@@ -41,6 +43,8 @@ export const useAddFolder = () => useContext(AddFolderContext);
 export const useRenameFolder = () => useContext(RenameFolderContext);
 
 export const useDeleteFolder = () => useContext(DeleteFolderContext);
+
+export const useAddMemo = () => useContext(AddMemoContext);
 
 export const FoldersProvider = ({ children }: PropsWithChildren) => {
   const FOLDERS_KEY = "folders";
@@ -114,13 +118,47 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     [setFoldersToUse]
   );
 
+  const addMemo = useCallback(
+    (id: Folder["id"]) => {
+      const memoId = nanoid();
+      const now = new Date().toISOString();
+
+      setFoldersToUse(prev =>
+        prev.map(folder =>
+          folder.id === id
+            ? {
+                ...folder,
+                count: folder.count + 1,
+                memos: [
+                  {
+                    id: memoId,
+                    headline: "",
+                    content: "",
+                    folderName: folder.name,
+                    folderId: folder.id,
+                    createdAt: now,
+                    updatedAt: now,
+                  },
+                  ...folder.memos,
+                ],
+                updatedAt: now,
+              }
+            : folder
+        )
+      );
+
+      return memoId;
+    },
+    [setFoldersToUse]
+  );
+
   return (
     <FoldersContext.Provider value={folders}>
       <SetFoldersContext.Provider value={setFoldersToUse}>
         <AddFolderContext.Provider value={addFolder}>
           <RenameFolderContext.Provider value={renameFolder}>
             <DeleteFolderContext.Provider value={deleteFolder}>
-              {children}
+              <AddMemoContext.Provider value={addMemo}>{children}</AddMemoContext.Provider>
             </DeleteFolderContext.Provider>
           </RenameFolderContext.Provider>
         </AddFolderContext.Provider>
