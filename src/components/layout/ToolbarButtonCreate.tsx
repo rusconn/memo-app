@@ -3,6 +3,7 @@ import { ComponentProps, memo, useCallback } from "react";
 import { TfiPencil } from "react-icons/tfi";
 
 import { pagesPath } from "@/$path";
+import { useAddMemo, useSetSelectedMemoId } from "@/contexts";
 import ToolbarButton from "./ToolbarButton";
 
 type Props = Pick<ComponentProps<typeof ToolbarButton>, "disabled" | "onClick">;
@@ -20,6 +21,8 @@ export const Component = memo(StyledComponent);
 
 const Container = () => {
   const router = useRouter();
+  const addMemo = useAddMemo();
+  const setSelectedMemoId = useSetSelectedMemoId();
 
   const folderId = (router.query.folderId ?? "memo") as string;
 
@@ -28,9 +31,9 @@ const Container = () => {
     router.pathname !== pagesPath.$url().pathname;
 
   const onClick: Props["onClick"] = useCallback(() => {
-    // eslint-disable-next-line no-alert
-    alert(folderId);
-  }, [folderId]);
+    const memoId = addMemo(folderId);
+    setSelectedMemoId(memoId);
+  }, [addMemo, folderId, setSelectedMemoId]);
 
   return <Component {...{ disabled, onClick }} />;
 };
