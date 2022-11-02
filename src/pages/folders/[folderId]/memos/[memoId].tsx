@@ -3,9 +3,9 @@ import parseISO from "date-fns/parseISO";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { ChangeEventHandler, MouseEventHandler, useCallback } from "react";
+import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useState } from "react";
 
-import { useFolders } from "@/contexts";
+import { useFolders, useUpdateMemo } from "@/contexts";
 
 const Page: NextPage = () => {
   const { query } = useRouter();
@@ -15,8 +15,35 @@ const Page: NextPage = () => {
   const memo = useFolders()
     .find(({ id }) => id === folderId)
     ?.memos.find(({ id }) => id === memoId);
+  const updateMemo = useUpdateMemo();
 
-  const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(() => {}, []);
+  const [timerId, setTimerId] = useState<number>();
+  const [content, setContent] = useState("");
+
+  useEffect(() => {
+    if (memo) {
+      setContent(memo.content);
+    }
+  }, [memo]);
+
+  const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
+    ({ currentTarget }) => {
+      if (!folderId || !memoId) {
+        return;
+      }
+
+      window.clearTimeout(timerId);
+
+      setContent(currentTarget.value);
+
+      const id = window.setTimeout(() => {
+        updateMemo({ folderId, memoId, content: currentTarget.value });
+      }, 500);
+
+      setTimerId(id);
+    },
+    [timerId, setContent, folderId, memoId, updateMemo]
+  );
 
   // 上流コンポーネントによるメモの選択状態解除を避ける
   const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(e => {
@@ -42,7 +69,7 @@ const Page: NextPage = () => {
         </time>
         <textarea
           className="w-full flex-grow resize-none bg-inherit p-6 outline-none"
-          value={memo.content}
+          value={content}
           {...{ onChange }}
         />
       </div>
