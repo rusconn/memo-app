@@ -3,19 +3,37 @@ import parseISO from "date-fns/parseISO";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { ChangeEventHandler, useCallback } from "react";
+import { ChangeEventHandler, useCallback, useState } from "react";
 
-import { useFolders } from "@/contexts";
+import { useFolders, useUpdateMemo } from "@/contexts";
 
 const Page: NextPage = () => {
   const { query } = useRouter();
-  const { folderId, memoId } = query;
+  const folderId = query.folderId as string;
+  const memoId = query.memoId as string;
 
   const memo = useFolders()
     .find(({ id }) => id === folderId)
     ?.memos.find(({ id }) => id === memoId);
 
-  const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(() => {}, []);
+  const [timerId, setTimerId] = useState<number>();
+  const [content, setContent] = useState(memo?.content ?? "");
+  const updateMemo = useUpdateMemo();
+
+  const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
+    ({ currentTarget }) => {
+      window.clearTimeout(timerId);
+
+      setContent(currentTarget.value);
+
+      const id = window.setTimeout(() => {
+        updateMemo({ folderId, memoId, content: currentTarget.value });
+      }, 500);
+
+      setTimerId(id);
+    },
+    [timerId, setContent, folderId, memoId, updateMemo]
+  );
 
   if (!memo) {
     return <p className="p-6">メモが見つかりませんでした。</p>;
@@ -32,7 +50,7 @@ const Page: NextPage = () => {
         </time>
         <textarea
           className="w-full flex-grow resize-none bg-inherit p-4 outline-none"
-          value={memo.content}
+          value={content}
           {...{ onChange }}
         />
       </div>
