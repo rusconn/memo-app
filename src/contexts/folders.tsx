@@ -42,6 +42,8 @@ const AddMemoContext = createContext<(id: Folder["id"]) => Memo["id"]>(() => "")
 
 const UpdateMemoContext = createContext<(params: UpdateMemoParams) => void>(() => {});
 
+const DeleteMemoContext = createContext<(id: Memo["id"]) => void>(() => {});
+
 export const useFolders = () => useContext(FoldersContext);
 
 export const useSetFolders = () => useContext(SetFoldersContext);
@@ -55,6 +57,8 @@ export const useDeleteFolder = () => useContext(DeleteFolderContext);
 export const useAddMemo = () => useContext(AddMemoContext);
 
 export const useUpdateMemo = () => useContext(UpdateMemoContext);
+
+export const useDeleteMemo = () => useContext(DeleteMemoContext);
 
 export const FoldersProvider = ({ children }: PropsWithChildren) => {
   const FOLDERS_KEY = "folders";
@@ -190,6 +194,26 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     [setFoldersToUse]
   );
 
+  const deleteMemo = useCallback(
+    (id: Memo["id"]) => {
+      const now = new Date().toISOString();
+
+      setFoldersToUse(prev =>
+        prev.map(folder =>
+          folder.memos.some(memo => memo.id === id)
+            ? {
+                ...folder,
+                count: folder.count - 1,
+                memos: folder.memos.filter(memo => memo.id !== id),
+                updatedAt: now,
+              }
+            : folder
+        )
+      );
+    },
+    [setFoldersToUse]
+  );
+
   return (
     <FoldersContext.Provider value={folders}>
       <SetFoldersContext.Provider value={setFoldersToUse}>
@@ -198,7 +222,9 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
             <DeleteFolderContext.Provider value={deleteFolder}>
               <AddMemoContext.Provider value={addMemo}>
                 <UpdateMemoContext.Provider value={updateMemo}>
-                  {children}
+                  <DeleteMemoContext.Provider value={deleteMemo}>
+                    {children}
+                  </DeleteMemoContext.Provider>
                 </UpdateMemoContext.Provider>
               </AddMemoContext.Provider>
             </DeleteFolderContext.Provider>
