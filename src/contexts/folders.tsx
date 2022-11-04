@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -30,35 +31,27 @@ const defaultFolder: Folder = {
 
 const FoldersContext = createContext([defaultFolder]);
 
-const SetFoldersContext = createContext<(f: (prev: Folder[]) => Folder[]) => void>(() => {});
-
-const AddFolderContext = createContext<() => Folder["id"]>(() => "");
-
-const RenameFolderContext = createContext<(params: RenameFolderParams) => void>(() => {});
-
-const DeleteFolderContext = createContext<(id: Folder["id"]) => void>(() => {});
-
-const AddMemoContext = createContext<(id: Folder["id"]) => Memo["id"]>(() => "");
-
-const UpdateMemoContext = createContext<(params: UpdateMemoParams) => void>(() => {});
-
-const DeleteMemoContext = createContext<(id: Memo["id"]) => void>(() => {});
+const FoldersMutationContext = createContext<{
+  setFolders: (f: (prev: Folder[]) => Folder[]) => void;
+  addFolder: () => Folder["id"];
+  renameFolder: (params: RenameFolderParams) => void;
+  deleteFolder: (id: Folder["id"]) => void;
+  addMemo: (id: Folder["id"]) => Memo["id"];
+  updateMemo: (params: UpdateMemoParams) => void;
+  deleteMemo: (id: Memo["id"]) => void;
+}>({
+  setFolders: () => {},
+  addFolder: () => "",
+  renameFolder: () => {},
+  deleteFolder: () => {},
+  addMemo: () => "",
+  updateMemo: () => {},
+  deleteMemo: () => {},
+});
 
 export const useFolders = () => useContext(FoldersContext);
 
-export const useSetFolders = () => useContext(SetFoldersContext);
-
-export const useAddFolder = () => useContext(AddFolderContext);
-
-export const useRenameFolder = () => useContext(RenameFolderContext);
-
-export const useDeleteFolder = () => useContext(DeleteFolderContext);
-
-export const useAddMemo = () => useContext(AddMemoContext);
-
-export const useUpdateMemo = () => useContext(UpdateMemoContext);
-
-export const useDeleteMemo = () => useContext(DeleteMemoContext);
+export const useFoldersMutation = () => useContext(FoldersMutationContext);
 
 export const FoldersProvider = ({ children }: PropsWithChildren) => {
   const FOLDERS_KEY = "folders";
@@ -214,23 +207,24 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     [setFoldersToUse]
   );
 
+  const foldersMutation = useMemo(
+    () => ({
+      setFolders: setFoldersToUse,
+      addFolder,
+      renameFolder,
+      deleteFolder,
+      addMemo,
+      updateMemo,
+      deleteMemo,
+    }),
+    [addFolder, addMemo, deleteFolder, deleteMemo, renameFolder, setFoldersToUse, updateMemo]
+  );
+
   return (
     <FoldersContext.Provider value={folders}>
-      <SetFoldersContext.Provider value={setFoldersToUse}>
-        <AddFolderContext.Provider value={addFolder}>
-          <RenameFolderContext.Provider value={renameFolder}>
-            <DeleteFolderContext.Provider value={deleteFolder}>
-              <AddMemoContext.Provider value={addMemo}>
-                <UpdateMemoContext.Provider value={updateMemo}>
-                  <DeleteMemoContext.Provider value={deleteMemo}>
-                    {children}
-                  </DeleteMemoContext.Provider>
-                </UpdateMemoContext.Provider>
-              </AddMemoContext.Provider>
-            </DeleteFolderContext.Provider>
-          </RenameFolderContext.Provider>
-        </AddFolderContext.Provider>
-      </SetFoldersContext.Provider>
+      <FoldersMutationContext.Provider value={foldersMutation}>
+        {children}
+      </FoldersMutationContext.Provider>
     </FoldersContext.Provider>
   );
 };

@@ -3,7 +3,7 @@ import { ComponentProps, memo, useCallback } from "react";
 import { TfiPencil } from "react-icons/tfi";
 
 import { pagesPath } from "@/$path";
-import { useAddMemo, useSetSelectedMemoId } from "@/contexts";
+import { useFoldersMutation, useSelectedMemoIdMutation } from "@/contexts";
 import ToolbarButton from "./ToolbarButton";
 
 type Props = ComponentProps<typeof ToolbarButton>;
@@ -14,8 +14,8 @@ export const Component = memo(StyledComponent);
 
 const Container = () => {
   const router = useRouter();
-  const addMemo = useAddMemo();
-  const setSelectedMemoId = useSetSelectedMemoId();
+  const { addMemo } = useFoldersMutation();
+  const { setSelectedMemoId } = useSelectedMemoIdMutation();
 
   const folderId = (router.query.folderId ?? "memo") as string;
 

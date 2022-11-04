@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useState } from "react";
 
-import { useFolders, useUpdateMemo } from "@/contexts";
+import { useFolders, useFoldersMutation } from "@/contexts";
 
 const Page: NextPage = () => {
   const { query } = useRouter();
@@ -15,7 +15,8 @@ const Page: NextPage = () => {
   const memo = useFolders()
     .find(({ id }) => id === folderId)
     ?.memos.find(({ id }) => id === memoId);
-  const updateMemo = useUpdateMemo();
+
+  const { updateMemo } = useFoldersMutation();
 
   const [timerId, setTimerId] = useState<number>();
   const [content, setContent] = useState("");

@@ -5,6 +5,7 @@ import {
   SetStateAction,
   useCallback,
   useContext,
+  useMemo,
   useState,
 } from "react";
 
@@ -12,17 +13,17 @@ import { Memo } from "./types";
 
 const SelectedMemoIdContext = createContext<Memo["id"] | null>(null);
 
-const SetSelectedMemoIdContext = createContext<Dispatch<SetStateAction<Memo["id"] | null>>>(
-  () => {}
-);
-
-const ClearSelectedMemoIdContext = createContext(() => {});
+const SelectedMemoIdMutationContext = createContext<{
+  setSelectedMemoId: Dispatch<SetStateAction<Memo["id"] | null>>;
+  clearSelectedMemoId: () => void;
+}>({
+  setSelectedMemoId: () => {},
+  clearSelectedMemoId: () => {},
+});
 
 export const useSelectedMemoId = () => useContext(SelectedMemoIdContext);
 
-export const useSetSelectedMemoId = () => useContext(SetSelectedMemoIdContext);
-
-export const useClearSelectedMemoId = () => useContext(ClearSelectedMemoIdContext);
+export const useSelectedMemoIdMutation = () => useContext(SelectedMemoIdMutationContext);
 
 export const SelectedMemoIdProvider = ({ children }: PropsWithChildren) => {
   const [selectedMemoId, setSelectedMemoId] = useState<Memo["id"] | null>(null);
@@ -31,13 +32,19 @@ export const SelectedMemoIdProvider = ({ children }: PropsWithChildren) => {
     setSelectedMemoId(null);
   }, []);
 
+  const selectedMemoIdMutation = useMemo(
+    () => ({
+      setSelectedMemoId,
+      clearSelectedMemoId,
+    }),
+    [clearSelectedMemoId]
+  );
+
   return (
     <SelectedMemoIdContext.Provider value={selectedMemoId}>
-      <SetSelectedMemoIdContext.Provider value={setSelectedMemoId}>
-        <ClearSelectedMemoIdContext.Provider value={clearSelectedMemoId}>
-          {children}
-        </ClearSelectedMemoIdContext.Provider>
-      </SetSelectedMemoIdContext.Provider>
+      <SelectedMemoIdMutationContext.Provider value={selectedMemoIdMutation}>
+        {children}
+      </SelectedMemoIdMutationContext.Provider>
     </SelectedMemoIdContext.Provider>
   );
 };

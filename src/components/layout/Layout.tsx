@@ -1,6 +1,6 @@
 import { ComponentProps, memo, PropsWithChildren, useCallback } from "react";
 
-import { useClearSelectedMemoId } from "@/contexts";
+import { useSelectedMemoIdMutation } from "@/contexts";
 import Sidebar from "./Sidebar";
 import Toolbar from "./Toolbar";
 
@@ -29,7 +29,7 @@ const StyledComponent = ({ children, onMouseDown, onToolbarMouseDown }: Props) =
 export const Component = memo(StyledComponent);
 
 const Container = ({ children }: ContainerProps) => {
-  const clearSelectedMemoId = useClearSelectedMemoId();
+  const { clearSelectedMemoId } = useSelectedMemoIdMutation();
 
   // メモの選択状態を解除する
   // イベント発生時に選択解除をしたくないコンポーネントには stopPropagation を設定する

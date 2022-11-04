@@ -3,7 +3,7 @@ import { ComponentProps, memo, useCallback } from "react";
 import { TfiPlus } from "react-icons/tfi";
 
 import { pagesPath } from "@/$path";
-import { useAddFolder, useStartRenameFolder } from "@/contexts";
+import { useFoldersMutation, useRenamingFolderIdMutation } from "@/contexts";
 
 type Props = {
   label: string;
@@ -23,8 +23,8 @@ const StyledComponent = ({ label, onClick }: Props) => (
 export const Component = memo(StyledComponent);
 
 const Container = () => {
-  const addFolder = useAddFolder();
-  const startRenameFolder = useStartRenameFolder();
+  const { addFolder } = useFoldersMutation();
+  const { startRenameFolder } = useRenamingFolderIdMutation();
 
   const label = "新規フォルダ";
 

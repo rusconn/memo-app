@@ -3,7 +3,7 @@ import { ComponentProps, memo, useCallback, useEffect, useState } from "react";
 import { TfiSearch } from "react-icons/tfi";
 
 import { pagesPath } from "@/$path";
-import { useClearSelectedMemoId } from "@/contexts";
+import { useSelectedMemoIdMutation } from "@/contexts";
 
 type Props = Pick<ComponentProps<"input">, "value" | "placeholder" | "onChange">;
 
@@ -27,7 +27,7 @@ const Container = () => {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [timerId, setTimerId] = useState<number>();
-  const clearSelectedMemoId = useClearSelectedMemoId();
+  const { clearSelectedMemoId } = useSelectedMemoIdMutation();
 
   const q = router.query.q as string | undefined;
 
