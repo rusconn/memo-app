@@ -3,7 +3,7 @@ import { memo, MouseEventHandler, useCallback } from "react";
 import { TfiPlus } from "react-icons/tfi";
 
 import { pagesPath } from "@/$path";
-import { useAddFolder, useStartRenameFolder } from "@/contexts";
+import { useFoldersMutation, useRenamingFolderIdMutation } from "@/contexts";
 
 type Props = {
   onClick: MouseEventHandler<HTMLButtonElement>;
@@ -23,15 +23,15 @@ const StyledComponent = ({ onClick }: Props) => (
 export const Component = memo(StyledComponent);
 
 const Container = () => {
-  const addFoler = useAddFolder();
-  const startRenameFolder = useStartRenameFolder();
+  const { addFolder } = useFoldersMutation();
+  const { startRenameFolder } = useRenamingFolderIdMutation();
 
   const onClick: Props["onClick"] = useCallback(() => {
-    const id = addFoler();
+    const id = addFolder();
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     Router.push(pagesPath.folders._folderId(id).$url());
     startRenameFolder(id);
-  }, [addFoler, startRenameFolder]);
+  }, [addFolder, startRenameFolder]);
 
   return <Component {...{ onClick }} />;
 };

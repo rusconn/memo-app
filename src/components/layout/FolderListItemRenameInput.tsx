@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 
-import { useEndRenameFolder, useRenameFolder } from "@/contexts";
+import { useRenamingFolderIdMutation, useFoldersMutation } from "@/contexts";
 
 type ContainerProps = {
   id: string;
@@ -39,9 +39,9 @@ export const Component = memo(forwardRef(StyledComponent));
 
 const Container = ({ id, name }: ContainerProps) => {
   const [value, setValue] = useState(name);
-  const renameFolder = useRenameFolder();
+  const { renameFolder } = useFoldersMutation();
   const ref = useRef<HTMLInputElement>(null);
-  const endRenameFolder = useEndRenameFolder();
+  const { endRenameFolder } = useRenamingFolderIdMutation();
 
   useEffect(() => {
     ref.current?.select();

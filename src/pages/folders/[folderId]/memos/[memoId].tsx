@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, useCallback, useState } from "react";
 
-import { useFolders, useUpdateMemo } from "@/contexts";
+import { useFolders, useFoldersMutation } from "@/contexts";
 
 const Page: NextPage = () => {
   const { query } = useRouter();
@@ -18,7 +18,7 @@ const Page: NextPage = () => {
 
   const [timerId, setTimerId] = useState<number>();
   const [content, setContent] = useState(memo?.content ?? "");
-  const updateMemo = useUpdateMemo();
+  const { updateMemo } = useFoldersMutation();
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
     ({ currentTarget }) => {

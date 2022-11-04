@@ -1,7 +1,7 @@
 import equal from "fast-deep-equal";
 import { ComponentProps, memo, useEffect } from "react";
 
-import { useClearSelectedMemoId } from "@/contexts";
+import { useSelectedMemoIdMutation } from "@/contexts";
 import MemoCard from "./MemoCard";
 
 type ContainerProps = {
@@ -28,7 +28,7 @@ const StyledComponent = ({ memos, showFolderName }: Props) => (
 export const Component = memo(StyledComponent, equal);
 
 const Container = ({ memos, showFolderName }: ContainerProps) => {
-  const clearSelectedMemoId = useClearSelectedMemoId();
+  const { clearSelectedMemoId } = useSelectedMemoIdMutation();
 
   // (非メモカード かつ 非ツールバー)をマウスダウンでメモ選択を解除する
   // NOTE: メモカードの onBlur だとツールバーでも解除されてしまい、削除ボタンが押せなくなる

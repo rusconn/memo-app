@@ -12,7 +12,7 @@ import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
 import { pagesPath } from "@/$path";
-import { useDeleteFolder, useStartRenameFolder } from "@/contexts";
+import { useFoldersMutation, useRenamingFolderIdMutation } from "@/contexts";
 import { clsx } from "@/utils";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 
@@ -69,8 +69,8 @@ const Container = ({ id, editable, current }: ContainerProps) => {
   const router = useRouter();
   const { value: isOpen, toggle, setFalse: close } = useBoolean(false);
   const ref = useRef<HTMLElement>(null);
-  const startRenameFolder = useStartRenameFolder();
-  const deleteFolder = useDeleteFolder();
+  const { startRenameFolder } = useRenamingFolderIdMutation();
+  const { deleteFolder } = useFoldersMutation();
 
   useOnClickOutside(ref, close);
 

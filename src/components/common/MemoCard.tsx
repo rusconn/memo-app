@@ -15,7 +15,7 @@ import {
 import { TfiFolder } from "react-icons/tfi";
 
 import { pagesPath } from "@/$path";
-import { useSelectedMemoId, useSetSelectedMemoId } from "@/contexts";
+import { useSelectedMemoId, useSelectedMemoIdMutation } from "@/contexts";
 import { clsx } from "@/utils";
 
 type ContainerProps = Pick<
@@ -101,7 +101,7 @@ const Container = ({
   showFolderName,
 }: ContainerProps) => {
   const selectedMemoId = useSelectedMemoId();
-  const setSelectedMemoId = useSetSelectedMemoId();
+  const { setSelectedMemoId } = useSelectedMemoIdMutation();
   const ref = useRef<HTMLButtonElement>(null);
 
   const selected = id === selectedMemoId;

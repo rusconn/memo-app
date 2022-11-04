@@ -1,18 +1,27 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 import { Folder } from "./types";
 
 const RenamingFolderIdContext = createContext<Folder["id"] | null>(null);
 
-const StartRenameFolderContext = createContext<(id: Folder["id"]) => void>(() => {});
-
-const EndRenameFolderContext = createContext<() => void>(() => {});
+const RenamingFolderIdMutationContext = createContext<{
+  startRenameFolder: (id: Folder["id"]) => void;
+  endRenameFolder: () => void;
+}>({
+  startRenameFolder: () => {},
+  endRenameFolder: () => {},
+});
 
 export const useRenamingFolderId = () => useContext(RenamingFolderIdContext);
 
-export const useStartRenameFolder = () => useContext(StartRenameFolderContext);
-
-export const useEndRenameFolder = () => useContext(EndRenameFolderContext);
+export const useRenamingFolderIdMutation = () => useContext(RenamingFolderIdMutationContext);
 
 export const RenameFolderIdProvider = ({ children }: PropsWithChildren) => {
   const [renamingFolderId, setRenamingFolderId] = useState<Folder["id"] | null>(null);
@@ -21,13 +30,19 @@ export const RenameFolderIdProvider = ({ children }: PropsWithChildren) => {
     setRenamingFolderId(null);
   }, []);
 
+  const RenamingFolderIdMutation = useMemo(
+    () => ({
+      startRenameFolder: setRenamingFolderId,
+      endRenameFolder,
+    }),
+    [endRenameFolder]
+  );
+
   return (
     <RenamingFolderIdContext.Provider value={renamingFolderId}>
-      <StartRenameFolderContext.Provider value={setRenamingFolderId}>
-        <EndRenameFolderContext.Provider value={endRenameFolder}>
-          {children}
-        </EndRenameFolderContext.Provider>
-      </StartRenameFolderContext.Provider>
+      <RenamingFolderIdMutationContext.Provider value={RenamingFolderIdMutation}>
+        {children}
+      </RenamingFolderIdMutationContext.Provider>
     </RenamingFolderIdContext.Provider>
   );
 };
