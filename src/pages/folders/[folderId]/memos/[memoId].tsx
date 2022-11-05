@@ -5,20 +5,18 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, useCallback, useState } from "react";
 
-import { useFolders, useFoldersMutation } from "@/contexts";
+import { useMemos, useMemosMutation } from "@/contexts";
 
 const Page: NextPage = () => {
   const { query } = useRouter();
   const folderId = query.folderId as string;
   const memoId = query.memoId as string;
 
-  const memo = useFolders()
-    .find(({ id }) => id === folderId)
-    ?.memos.find(({ id }) => id === memoId);
+  const memo = useMemos().find(x => x.folderId === folderId && x.id === memoId);
 
   const [timerId, setTimerId] = useState<number>();
   const [content, setContent] = useState(memo?.content ?? "");
-  const { updateMemo } = useFoldersMutation();
+  const { updateMemo } = useMemosMutation();
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
     ({ currentTarget }) => {

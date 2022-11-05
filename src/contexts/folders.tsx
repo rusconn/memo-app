@@ -9,15 +9,9 @@ import {
   useState,
 } from "react";
 
-import { Folder, Memo } from "./types";
+import { Folder } from "./types";
 
 type RenameFolderParams = Pick<Folder, "id" | "name">;
-
-type UpdateMemoParams = {
-  folderId: Folder["id"];
-  memoId: Memo["id"];
-  content: Memo["content"];
-};
 
 const defaultFolder: Folder = {
   id: "memo",
@@ -36,17 +30,11 @@ const FoldersMutationContext = createContext<{
   addFolder: () => Folder["id"];
   renameFolder: (params: RenameFolderParams) => void;
   deleteFolder: (id: Folder["id"]) => void;
-  addMemo: (id: Folder["id"]) => Memo["id"];
-  updateMemo: (params: UpdateMemoParams) => void;
-  deleteMemo: (id: Memo["id"]) => void;
 }>({
   setFolders: () => {},
   addFolder: () => "all",
   renameFolder: () => {},
   deleteFolder: () => {},
-  addMemo: () => "",
-  updateMemo: () => {},
-  deleteMemo: () => {},
 });
 
 export const useFolders = () => useContext(FoldersContext);
@@ -125,99 +113,14 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     [setFoldersToUse]
   );
 
-  const addMemo = useCallback(
-    (id: Folder["id"]) => {
-      const memoId = nanoid();
-      const now = new Date().toISOString();
-
-      setFoldersToUse(prev =>
-        prev.map(folder =>
-          folder.id === id
-            ? {
-                ...folder,
-                count: folder.count + 1,
-                memos: [
-                  {
-                    id: memoId,
-                    headline: "",
-                    content: "",
-                    folderName: folder.name,
-                    folderId: folder.id,
-                    createdAt: now,
-                    updatedAt: now,
-                  },
-                  ...folder.memos,
-                ],
-                updatedAt: now,
-              }
-            : folder
-        )
-      );
-
-      return memoId;
-    },
-    [setFoldersToUse]
-  );
-
-  const updateMemo = useCallback(
-    ({ folderId, memoId, content }: UpdateMemoParams) => {
-      const now = new Date().toISOString();
-
-      setFoldersToUse(prev =>
-        prev.map(folder =>
-          folder.id === folderId
-            ? {
-                ...folder,
-                memos: folder.memos.map(memo =>
-                  memo.id === memoId
-                    ? {
-                        ...memo,
-                        headline: content.split("\n")[0],
-                        content,
-                        updatedAt: now,
-                      }
-                    : memo
-                ),
-                updatedAt: now,
-              }
-            : folder
-        )
-      );
-    },
-    [setFoldersToUse]
-  );
-
-  const deleteMemo = useCallback(
-    (id: Memo["id"]) => {
-      const now = new Date().toISOString();
-
-      setFoldersToUse(prev =>
-        prev.map(folder =>
-          folder.memos.some(memo => memo.id === id)
-            ? {
-                ...folder,
-                count: folder.count - 1,
-                memos: folder.memos.filter(memo => memo.id !== id),
-                updatedAt: now,
-              }
-            : folder
-        )
-      );
-    },
-    [setFoldersToUse]
-  );
-
   const foldersMutation = useMemo(
     () => ({
       setFolders: setFoldersToUse,
       addFolder,
       renameFolder,
       deleteFolder,
-      addMemo,
-      updateMemo,
-      deleteMemo,
     }),
-    [addFolder, addMemo, deleteFolder, deleteMemo, renameFolder, setFoldersToUse, updateMemo]
+    [addFolder, deleteFolder, renameFolder, setFoldersToUse]
   );
 
   return (

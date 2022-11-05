@@ -4,7 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { MemoCards } from "@/components/common";
-import { useFolders } from "@/contexts";
+import { useMemos } from "@/contexts";
 
 // 下記 OptionalQuery を定義したいが、生成コードの import パスが間違っているので避けた
 // https://github.com/aspida/pathpida#define-query---nextjs
@@ -12,7 +12,7 @@ import { useFolders } from "@/contexts";
 const Page: NextPage = () => {
   const router = useRouter();
   const q = (router.query.q ?? "") as string;
-  const allMemos = useFolders().flatMap(({ memos }) => memos);
+  const allMemos = useMemos();
   const title = q === "" ? "すべてのメモ" : "検索結果";
 
   const memos =
