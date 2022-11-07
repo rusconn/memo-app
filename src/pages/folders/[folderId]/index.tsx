@@ -26,7 +26,8 @@ const Page: NextPage = () => {
       ...memo,
       headline: memo.content.split("\n")[0],
       folderName: folder.name,
-    }));
+    }))
+    .sort((x, y) => Date.parse(y.updatedAt) - Date.parse(x.updatedAt));
 
   return (
     <>

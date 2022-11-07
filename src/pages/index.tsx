@@ -16,11 +16,13 @@ const Page: NextPage = () => {
 
   const q = router.query.q as string | undefined;
 
-  const allMemosToUse = allMemos.map(memo => ({
-    ...memo,
-    headline: memo.content.split("\n")[0],
-    folderName: folders.find(folder => folder.id === memo.folderId)?.name ?? "",
-  }));
+  const allMemosToUse = allMemos
+    .sort((x, y) => Date.parse(y.updatedAt) - Date.parse(x.updatedAt))
+    .map(memo => ({
+      ...memo,
+      headline: memo.content.split("\n")[0],
+      folderName: folders.find(folder => folder.id === memo.folderId)?.name ?? "",
+    }));
 
   const [title, memos] =
     !q || q === ""
