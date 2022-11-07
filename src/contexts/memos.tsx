@@ -1,14 +1,17 @@
 import { nanoid } from "nanoid";
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-import { Folder, Memo } from "./types";
-import { useFolders, useFoldersMutation } from "./folders";
+import { Folder, Memo, Timestamps } from "./types";
 
-type UpdateMemoParams = {
-  folderId: Folder["id"];
-  memoId: Memo["id"];
-  content: Memo["content"];
-};
+type UpdateMemoParams = Pick<Memo, "id"> & Partial<Omit<Memo, "id" | keyof Timestamps>>;
 
 const MemosContext = createContext<Memo[]>([]);
 
@@ -16,103 +19,93 @@ const MemosMutationContext = createContext<{
   addMemo: (id: Folder["id"]) => Memo["id"];
   updateMemo: (params: UpdateMemoParams) => void;
   deleteMemo: (id: Memo["id"]) => void;
+  deleteMemosWhere: (f: (memo: Memo) => boolean) => void;
 }>({
   addMemo: () => "",
   updateMemo: () => {},
   deleteMemo: () => {},
+  deleteMemosWhere: () => {},
 });
 
 export const useMemos = () => useContext(MemosContext);
 
 export const useMemosMutation = () => useContext(MemosMutationContext);
 
-/** FoldersProvider に依存する */
 export const MemosProvider = ({ children }: PropsWithChildren) => {
-  const folders = useFolders();
-  const { setFolders } = useFoldersMutation();
+  const MEMOS_KEY = "memos";
 
-  const memos = folders.flatMap(folder => folder.memos);
+  const [memos, setMemos] = useState<Memo[]>([]);
+
+  // ストレージはクライアントサイドにしかない
+  useEffect(() => {
+    const existingMemos = localStorage.getItem(MEMOS_KEY);
+
+    if (existingMemos) {
+      setMemos(JSON.parse(existingMemos) as Memo[]);
+    }
+  }, []);
+
+  // state とストレージを同期するラッパー
+  const setMemosToUse = useCallback((f: (prev: Memo[]) => Memo[]) => {
+    setMemos(prev => {
+      const next = f(prev);
+      localStorage.setItem(MEMOS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   const addMemo = useCallback(
     (id: Folder["id"]) => {
       const memoId = nanoid();
       const now = new Date().toISOString();
 
-      setFolders(prev =>
-        prev.map(folder =>
-          folder.id === id
-            ? {
-                ...folder,
-                count: folder.count + 1,
-                memos: [
-                  {
-                    id: memoId,
-                    headline: "",
-                    content: "",
-                    folderName: folder.name,
-                    folderId: folder.id,
-                    createdAt: now,
-                    updatedAt: now,
-                  },
-                  ...folder.memos,
-                ],
-                updatedAt: now,
-              }
-            : folder
-        )
-      );
+      setMemosToUse(prev => [
+        {
+          id: memoId,
+          content: "",
+          folderId: id,
+          createdAt: now,
+          updatedAt: now,
+        },
+        ...prev,
+      ]);
 
       return memoId;
     },
-    [setFolders]
+    [setMemosToUse]
   );
 
   const updateMemo = useCallback(
-    ({ folderId, memoId, content }: UpdateMemoParams) => {
+    ({ id, ...rest }: UpdateMemoParams) => {
       const now = new Date().toISOString();
 
-      setFolders(prev =>
-        prev.map(folder =>
-          folder.id === folderId
+      setMemosToUse(prev =>
+        prev.map(memo =>
+          memo.id === id
             ? {
-                ...folder,
-                memos: folder.memos.map(memo =>
-                  memo.id === memoId
-                    ? {
-                        ...memo,
-                        headline: content.split("\n")[0],
-                        content,
-                        updatedAt: now,
-                      }
-                    : memo
-                ),
+                ...memo,
+                ...rest,
                 updatedAt: now,
               }
-            : folder
+            : memo
         )
       );
     },
-    [setFolders]
+    [setMemosToUse]
   );
 
   const deleteMemo = useCallback(
     (id: Memo["id"]) => {
-      const now = new Date().toISOString();
-
-      setFolders(prev =>
-        prev.map(folder =>
-          folder.memos.some(memo => memo.id === id)
-            ? {
-                ...folder,
-                count: folder.count - 1,
-                memos: folder.memos.filter(memo => memo.id !== id),
-                updatedAt: now,
-              }
-            : folder
-        )
-      );
+      setMemosToUse(prev => prev.filter(memo => memo.id !== id));
     },
-    [setFolders]
+    [setMemosToUse]
+  );
+
+  const deleteMemosWhere = useCallback(
+    (f: (_: Memo) => boolean) => {
+      setMemosToUse(prev => prev.filter(memo => !f(memo)));
+    },
+    [setMemosToUse]
   );
 
   const memosMutation = useMemo(
@@ -120,8 +113,9 @@ export const MemosProvider = ({ children }: PropsWithChildren) => {
       addMemo,
       updateMemo,
       deleteMemo,
+      deleteMemosWhere,
     }),
-    [addMemo, deleteMemo, updateMemo]
+    [addMemo, deleteMemosWhere, deleteMemo, updateMemo]
   );
 
   return (

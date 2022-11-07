@@ -3,13 +3,14 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { MemoCards } from "@/components/common";
-import { useFolders } from "@/contexts";
+import { useFolders, useMemos } from "@/contexts";
 
 const Page: NextPage = () => {
   const router = useRouter();
 
   const folderId = router.query.folderId as string | undefined;
   const folder = useFolders().find(({ id }) => id === folderId);
+  const allMemos = useMemos();
 
   if (!folderId) {
     return <p className="p-6">ロード中…</p>;
@@ -19,7 +20,13 @@ const Page: NextPage = () => {
     return <p className="p-6">フォルダが見つかりませんでした。</p>;
   }
 
-  const { memos } = folder;
+  const memos = allMemos
+    .filter(memo => memo.folderId === folderId)
+    .map(memo => ({
+      ...memo,
+      headline: memo.content.split("\n")[0],
+      folderName: folder.name,
+    }));
 
   return (
     <>

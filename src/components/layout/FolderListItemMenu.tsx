@@ -4,7 +4,7 @@ import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
 import { pagesPath } from "@/$path";
-import { useFoldersMutation, useRenamingFolderIdMutation } from "@/contexts";
+import { useFoldersMutation, useMemosMutation, useRenamingFolderIdMutation } from "@/contexts";
 import { clsx } from "@/utils";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 
@@ -68,6 +68,7 @@ const Container = ({ id, editable, current }: ContainerProps) => {
   const ref = useRef<HTMLElement>(null);
   const { startRenameFolder } = useRenamingFolderIdMutation();
   const { deleteFolder } = useFoldersMutation();
+  const { deleteMemosWhere } = useMemosMutation();
 
   useOnClickOutside(ref, close);
 
@@ -83,11 +84,12 @@ const Container = ({ id, editable, current }: ContainerProps) => {
   const onDeleteClick: NonNullable<Props["onDeleteClick"]> = useCallback(() => {
     // 表示中のベージがなくなる場合はトップへ移動する
     if (router.query.folderId === id) {
-      void router.push(pagesPath.$url()).then(() => deleteFolder(id));
-    } else {
-      deleteFolder(id);
+      void router.push(pagesPath.$url());
     }
-  }, [router, deleteFolder, id]);
+
+    deleteMemosWhere(x => x.folderId === id);
+    deleteFolder(id);
+  }, [router, id, deleteMemosWhere, deleteFolder]);
 
   return (
     <Component

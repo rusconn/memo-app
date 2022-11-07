@@ -16,8 +16,6 @@ type RenameFolderParams = Pick<Folder, "id" | "name">;
 const defaultFolder: Folder = {
   id: "memo",
   name: "メモ",
-  count: 0,
-  memos: [],
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   editable: false,
@@ -26,12 +24,10 @@ const defaultFolder: Folder = {
 const FoldersContext = createContext([defaultFolder]);
 
 const FoldersMutationContext = createContext<{
-  setFolders: (f: (prev: Folder[]) => Folder[]) => void;
   addFolder: () => Folder["id"];
   renameFolder: (params: RenameFolderParams) => void;
   deleteFolder: (id: Folder["id"]) => void;
 }>({
-  setFolders: () => {},
   addFolder: () => "",
   renameFolder: () => {},
   deleteFolder: () => {},
@@ -68,11 +64,9 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     const id = nanoid();
     const now = new Date().toISOString();
 
-    const newFolder = {
+    const newFolder: Folder = {
       id,
       name: "新規フォルダ",
-      count: 0,
-      memos: [],
       editable: true,
       createdAt: now,
       updatedAt: now,
@@ -93,10 +87,6 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
             ? {
                 ...folder,
                 name,
-                memos: folder.memos.map(memo => ({
-                  ...memo,
-                  folderName: name,
-                })),
                 updatedAt: now,
               }
             : folder
@@ -115,12 +105,11 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
 
   const foldersMutation = useMemo(
     () => ({
-      setFolders: setFoldersToUse,
       addFolder,
       renameFolder,
       deleteFolder,
     }),
-    [addFolder, deleteFolder, renameFolder, setFoldersToUse]
+    [addFolder, deleteFolder, renameFolder]
   );
 
   return (

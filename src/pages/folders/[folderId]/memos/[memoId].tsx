@@ -35,7 +35,7 @@ const Page: NextPage = () => {
       setContent(currentTarget.value);
 
       const id = window.setTimeout(() => {
-        updateMemo({ folderId, memoId, content: currentTarget.value });
+        updateMemo({ id: memoId, content: currentTarget.value });
       }, 500);
 
       setTimerId(id);
