@@ -32,7 +32,7 @@ export const Component = memo(forwardRef(StyledComponent));
 
 const Container = ({ id, name }: ContainerProps) => {
   const [value, setValue] = useState(name);
-  const { renameFolder } = useFoldersMutation();
+  const { updateFolder } = useFoldersMutation();
   const ref = useRef<HTMLInputElement>(null);
   const { endRenameFolder } = useRenamingFolderIdMutation();
 
@@ -42,13 +42,13 @@ const Container = ({ id, name }: ContainerProps) => {
 
   const tryRename = useCallback(() => {
     if (value.trim() !== "") {
-      renameFolder({ id, name: value });
+      updateFolder({ id, name: value });
     } else {
       setValue(name);
     }
 
     endRenameFolder();
-  }, [renameFolder, id, value, name, endRenameFolder]);
+  }, [updateFolder, id, value, name, endRenameFolder]);
 
   const onChange: NonNullable<Props["onChange"]> = useCallback(({ currentTarget }) => {
     setValue(currentTarget.value);

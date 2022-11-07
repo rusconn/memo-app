@@ -9,9 +9,9 @@ import {
   useState,
 } from "react";
 
-import { Folder } from "./types";
+import { Folder, Timestamps } from "./types";
 
-type RenameFolderParams = Pick<Folder, "id" | "name">;
+type UpdateFolderParams = Pick<Folder, "id"> & Partial<Omit<Folder, "id" | keyof Timestamps>>;
 
 const defaultFolder: Folder = {
   id: "memo",
@@ -25,11 +25,11 @@ const FoldersContext = createContext([defaultFolder]);
 
 const FoldersMutationContext = createContext<{
   addFolder: () => Folder["id"];
-  renameFolder: (params: RenameFolderParams) => void;
+  updateFolder: (params: UpdateFolderParams) => void;
   deleteFolder: (id: Folder["id"]) => void;
 }>({
   addFolder: () => "",
-  renameFolder: () => {},
+  updateFolder: () => {},
   deleteFolder: () => {},
 });
 
@@ -77,8 +77,8 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     return id;
   }, [setFoldersToUse]);
 
-  const renameFolder = useCallback(
-    ({ id, name }: RenameFolderParams) => {
+  const updateFolder = useCallback(
+    ({ id, ...rest }: UpdateFolderParams) => {
       const now = new Date().toISOString();
 
       setFoldersToUse(prev =>
@@ -86,7 +86,7 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
           folder.id === id
             ? {
                 ...folder,
-                name,
+                ...rest,
                 updatedAt: now,
               }
             : folder
@@ -106,10 +106,10 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
   const foldersMutation = useMemo(
     () => ({
       addFolder,
-      renameFolder,
+      updateFolder,
       deleteFolder,
     }),
-    [addFolder, deleteFolder, renameFolder]
+    [addFolder, deleteFolder, updateFolder]
   );
 
   return (
