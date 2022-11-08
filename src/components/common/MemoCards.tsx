@@ -1,11 +1,18 @@
 import equal from "fast-deep-equal";
 import { ComponentProps, memo } from "react";
 
+import { useSelectedMemoId } from "@/contexts";
 import MemoCard from "./MemoCard";
 
+type ContainerProps = {
+  memos: Omit<PropMemo, "hideFolderLine" | "selected">[];
+} & Omit<Props, "memos">;
+
 type Props = {
-  memos: Omit<ComponentProps<typeof MemoCard>, "hideFolderLine">[];
-} & Pick<ComponentProps<typeof MemoCard>, "hideFolderLine">;
+  memos: Omit<PropMemo, "hideFolderLine">[];
+} & Pick<PropMemo, "hideFolderLine">;
+
+type PropMemo = ComponentProps<typeof MemoCard>;
 
 const StyledComponent = ({ memos, hideFolderLine }: Props) => (
   <ol
@@ -13,7 +20,7 @@ const StyledComponent = ({ memos, hideFolderLine }: Props) => (
     // tailwind での指定方法がわからなかった
     style={{ gridTemplateColumns: "repeat(auto-fill,minmax(12rem,1fr))" }}
   >
-    {memos.map(({ id, headline, content, folderName, folderId, updatedAt }) => (
+    {memos.map(({ id, headline, content, folderName, folderId, updatedAt, selected }) => (
       <li key={id}>
         <MemoCard
           {...{
@@ -24,6 +31,7 @@ const StyledComponent = ({ memos, hideFolderLine }: Props) => (
             folderId,
             updatedAt,
             hideFolderLine,
+            selected,
           }}
         />
       </li>
@@ -33,4 +41,15 @@ const StyledComponent = ({ memos, hideFolderLine }: Props) => (
 
 export const Component = memo(StyledComponent, equal);
 
-export default Component;
+const Container = ({ memos, hideFolderLine }: ContainerProps) => {
+  const selectedMemoId = useSelectedMemoId();
+
+  const memosToUse = memos.map(x => ({
+    ...x,
+    selected: x.id === selectedMemoId,
+  }));
+
+  return <Component {...{ hideFolderLine }} memos={memosToUse} />;
+};
+
+export default Container;

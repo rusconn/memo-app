@@ -12,14 +12,14 @@ import {
 } from "react";
 import { TfiFolder } from "react-icons/tfi";
 
-import { useSelectedMemoId, useSelectedMemoIdMutation } from "@/contexts";
+import { useSelectedMemoIdMutation } from "@/contexts";
 import { clsx, pagesPath } from "@/lib";
 
 type ContainerProps = {
   id: string;
   folderId: string;
   updatedAt: string;
-} & Pick<Props, "headline" | "content" | "folderName" | "hideFolderLine">;
+} & Pick<Props, "headline" | "content" | "folderName" | "hideFolderLine" | "selected">;
 
 type Props = {
   headline: string;
@@ -90,14 +90,13 @@ const Container = ({
   content,
   folderName,
   hideFolderLine,
+  selected,
 }: ContainerProps) => {
-  const selectedMemoId = useSelectedMemoId();
   const { setSelectedMemoId } = useSelectedMemoIdMutation();
   const ref = useRef<HTMLButtonElement>(null);
 
   const headlineToUse = headline === "" ? "新規メモ" : headline;
   const date = format(parseISO(updatedAt), "yyyy/MM/dd");
-  const selected = id === selectedMemoId;
 
   // メモ詳細から一覧へ戻った際にフォーカスする
   useEffect(() => {
