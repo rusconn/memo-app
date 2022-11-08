@@ -3,8 +3,8 @@ import { ComponentProps, ForwardedRef, forwardRef, memo, useCallback, useRef } f
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
-import { pagesPath } from "@/$path";
 import { useFoldersMutation, useMemosMutation, useRenamingFolderIdMutation } from "@/contexts";
+import { pagesPath } from "@/lib";
 import { clsx } from "@/utils";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 

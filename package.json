@@ -10,7 +10,7 @@
     "fix:type": "yarn typecheck",
     "fix:lint": "yarn lint --fix",
     "fix:format": "yarn format",
-    "path": "pathpida -o src --ignorePath .gitignore --enableStatic",
+    "path": "pathpida --ignorePath .gitignore --enableStatic",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --cache",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,json,yml,md}'"

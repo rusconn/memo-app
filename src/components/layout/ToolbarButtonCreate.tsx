@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { ComponentProps, memo, useCallback } from "react";
 import { TfiPencil } from "react-icons/tfi";
 
-import { pagesPath } from "@/$path";
 import { useMemosMutation, useSelectedMemoIdMutation } from "@/contexts";
+import { pagesPath } from "@/lib";
 import ToolbarButton from "./ToolbarButton";
 
 type Props = ComponentProps<typeof ToolbarButton>;

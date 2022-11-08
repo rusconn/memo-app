@@ -2,7 +2,7 @@ import equal from "fast-deep-equal";
 import Link, { LinkProps } from "next/link";
 import { memo } from "react";
 
-import { pagesPath } from "@/$path";
+import { pagesPath } from "@/lib";
 
 type Props = {
   name: string;

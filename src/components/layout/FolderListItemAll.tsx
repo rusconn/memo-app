@@ -2,8 +2,8 @@ import equal from "fast-deep-equal";
 import { useRouter } from "next/router";
 import { memo } from "react";
 
-import { pagesPath } from "@/$path";
 import { useMemos } from "@/contexts";
+import { pagesPath } from "@/lib";
 import FolderListItem from "./FolderListItem";
 
 const StyledComponent = FolderListItem;

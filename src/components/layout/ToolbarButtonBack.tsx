@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { ComponentProps, memo } from "react";
 import { TfiAngleLeft } from "react-icons/tfi";
 
-import { pagesPath } from "@/$path";
+import { pagesPath } from "@/lib";
 import ToolbarButton from "./ToolbarButton";
 
 type Props = ComponentProps<typeof ToolbarButton>;

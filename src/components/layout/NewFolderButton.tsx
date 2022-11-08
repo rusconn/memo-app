@@ -2,8 +2,8 @@ import Router from "next/router";
 import { ComponentProps, memo, useCallback } from "react";
 import { TfiPlus } from "react-icons/tfi";
 
-import { pagesPath } from "@/$path";
 import { useFoldersMutation, useRenamingFolderIdMutation } from "@/contexts";
+import { pagesPath } from "@/lib";
 
 type Props = {
   label: string;

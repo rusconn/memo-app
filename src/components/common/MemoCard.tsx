@@ -12,8 +12,8 @@ import {
 } from "react";
 import { TfiFolder } from "react-icons/tfi";
 
-import { pagesPath } from "@/$path";
 import { useSelectedMemoId, useSelectedMemoIdMutation } from "@/contexts";
+import { pagesPath } from "@/lib";
 import { clsx } from "@/utils";
 
 type ContainerProps = {

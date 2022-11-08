@@ -2,8 +2,8 @@ import Router, { useRouter } from "next/router";
 import { ComponentProps, memo, useCallback, useEffect, useState } from "react";
 import { TfiSearch } from "react-icons/tfi";
 
-import { pagesPath } from "@/$path";
 import { useSelectedMemoIdMutation } from "@/contexts";
+import { pagesPath } from "@/lib";
 
 type Props = Pick<ComponentProps<"input">, "value" | "placeholder" | "onChange">;
 
@@ -52,11 +52,7 @@ const Container = () => {
       setValue(currentTarget.value);
 
       const id = window.setTimeout(() => {
-        void Router.push({
-          pathname: pagesPath.$url().pathname,
-          query: { q: currentTarget.value },
-        });
-
+        void Router.push(pagesPath.$url({ query: { q: currentTarget.value } }));
         clearSelectedMemoId();
       }, 500);
 

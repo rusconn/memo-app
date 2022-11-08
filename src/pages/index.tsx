@@ -6,15 +6,16 @@ import { useRouter } from "next/router";
 import { MemoCards } from "@/components/common";
 import { useFolders, useMemos } from "@/contexts";
 
-// 下記 OptionalQuery を定義したいが、生成コードの import パスが間違っているので避けた
-// https://github.com/aspida/pathpida#define-query---nextjs
+export type OptionalQuery = {
+  q?: string;
+};
 
 const Page: NextPage = () => {
   const router = useRouter();
   const folders = useFolders();
   const allMemos = useMemos();
 
-  const q = router.query.q as string | undefined;
+  const { q }: OptionalQuery = router.query;
 
   const allMemosToUse = allMemos
     .sort((x, y) => Date.parse(y.updatedAt) - Date.parse(x.updatedAt))

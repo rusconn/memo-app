@@ -2,8 +2,8 @@ import equal from "fast-deep-equal";
 import { useRouter } from "next/router";
 import { ComponentProps, memo, useMemo } from "react";
 
-import { pagesPath } from "@/$path";
 import { useRenamingFolderId } from "@/contexts";
+import { pagesPath } from "@/lib";
 import FolderListItem from "./FolderListItem";
 import FolderListItemMenu from "./FolderListItemMenu";
 import FolderListItemRenameInput from "./FolderListItemRenameInput";

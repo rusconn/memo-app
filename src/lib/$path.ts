@@ -1,3 +1,5 @@
+import type { OptionalQuery as OptionalQuery0 } from "../pages";
+
 export const pagesPath = {
   folders: {
     _folderId: (folderId: string | number) => ({
@@ -17,7 +19,11 @@ export const pagesPath = {
       }),
     }),
   },
-  $url: (url?: { hash?: string }) => ({ pathname: "/" as const, hash: url?.hash }),
+  $url: (url?: { query?: OptionalQuery0; hash?: string }) => ({
+    pathname: "/" as const,
+    query: url?.query,
+    hash: url?.hash,
+  }),
 };
 
 export type PagesPath = typeof pagesPath;

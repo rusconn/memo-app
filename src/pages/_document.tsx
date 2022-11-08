@@ -1,6 +1,6 @@
 import { Html, Head, Main, NextScript } from "next/document";
 
-import { staticPath } from "@/$path";
+import { staticPath } from "@/lib";
 
 const Document = () => (
   <Html lang="ja">
