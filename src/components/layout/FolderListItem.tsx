@@ -3,7 +3,7 @@ import Link, { LinkProps } from "next/link";
 import { memo, ReactElement } from "react";
 import { TfiFolder } from "react-icons/tfi";
 
-import { clsx } from "@/utils";
+import { clsx } from "@/lib";
 
 type Props = {
   name: string;

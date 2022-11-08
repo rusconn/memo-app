@@ -1,6 +1,6 @@
 import { ComponentProps, memo } from "react";
 
-import { clsx } from "@/utils";
+import { clsx } from "@/lib";
 
 type Props = Pick<ComponentProps<"button">, "children" | "disabled" | "onClick">;
 

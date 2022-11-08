@@ -1,7 +1,7 @@
 import { ComponentProps, memo } from "react";
 import { IconType } from "react-icons";
 
-import { clsx } from "@/utils";
+import { clsx } from "@/lib";
 
 type Props = {
   Icon: IconType;

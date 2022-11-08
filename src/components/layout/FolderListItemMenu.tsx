@@ -4,8 +4,7 @@ import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
 import { useFoldersMutation, useMemosMutation, useRenamingFolderIdMutation } from "@/contexts";
-import { pagesPath } from "@/lib";
-import { clsx } from "@/utils";
+import { clsx, pagesPath } from "@/lib";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 
 type ContainerProps = {
