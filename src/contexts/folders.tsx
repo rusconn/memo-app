@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 
+import { MAX_FOLDERS } from "@/config";
 import { Folder, Timestamps } from "./types";
 
 type UpdateFolderParams = Pick<Folder, "id"> & Partial<Omit<Folder, "id" | keyof Timestamps>>;
@@ -61,6 +62,10 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const addFolder = useCallback(() => {
+    if (folders.length >= MAX_FOLDERS) {
+      throw new Error("too many folders.");
+    }
+
     const id = nanoid();
     const now = new Date().toISOString();
 
@@ -75,7 +80,7 @@ export const FoldersProvider = ({ children }: PropsWithChildren) => {
     setFoldersToUse(([defaultMemoFolder, ...rest]) => [defaultMemoFolder, newFolder, ...rest]);
 
     return id;
-  }, [setFoldersToUse]);
+  }, [folders.length, setFoldersToUse]);
 
   const updateFolder = useCallback(
     ({ id, ...rest }: UpdateFolderParams) => {
