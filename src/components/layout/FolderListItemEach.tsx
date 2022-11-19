@@ -39,4 +39,4 @@ const Container = ({ id, name, count, editable }: ContainerProps) => {
   );
 };
 
-export default Container;
+export default memo(Container);

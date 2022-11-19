@@ -33,4 +33,4 @@ const Container = () => {
   return <Component {...{ Icon, tooltipText, ariaLabel, disabled, onClick }} />;
 };
 
-export default Container;
+export default memo(Container);

@@ -22,4 +22,4 @@ const Container = () => {
   return <Component {...{ name, count, current, href }} />;
 };
 
-export default Container;
+export default memo(Container);

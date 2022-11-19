@@ -23,4 +23,4 @@ const Container = () => {
   return <Component {...{ name, href }} />;
 };
 
-export default Container;
+export default memo(Container);

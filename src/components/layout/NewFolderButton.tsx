@@ -36,4 +36,4 @@ const Container = () => {
   return <Component {...{ label, onClick }} />;
 };
 
-export default Container;
+export default memo(Container);

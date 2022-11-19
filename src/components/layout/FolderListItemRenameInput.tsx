@@ -68,4 +68,4 @@ const Container = ({ id, name }: ContainerProps) => {
   return <Component {...{ value, onChange, onKeyDown, onBlur, ref }} />;
 };
 
-export default Container;
+export default memo(Container);

@@ -45,4 +45,4 @@ const Container = ({ children }: ContainerProps) => {
   return <Component {...{ onMouseDown, onToolbarMouseDown }}>{children}</Component>;
 };
 
-export default Container;
+export default memo(Container);

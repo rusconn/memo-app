@@ -34,4 +34,4 @@ const Container = () => {
   return <Component folders={foldersToUse} />;
 };
 
-export default Container;
+export default memo(Container);

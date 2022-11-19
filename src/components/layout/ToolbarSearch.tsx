@@ -64,4 +64,4 @@ const Container = () => {
   return <Component {...{ value, placeholder, onChange }} />;
 };
 
-export default Container;
+export default memo(Container);
