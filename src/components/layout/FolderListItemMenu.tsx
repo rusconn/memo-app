@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { ComponentProps, ForwardedRef, forwardRef, memo, useCallback, useRef } from "react";
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
@@ -62,7 +62,6 @@ const StyledComponent = (
 export const Component = memo(forwardRef(StyledComponent));
 
 const Container = ({ id, editable, current }: ContainerProps) => {
-  const router = useRouter();
   const { value: isOpen, toggle, setFalse: close } = useBoolean(false);
   const ref = useRef<HTMLElement>(null);
   const { startRenameFolder } = useRenamingFolderIdMutation();
@@ -82,13 +81,13 @@ const Container = ({ id, editable, current }: ContainerProps) => {
 
   const onDeleteClick: NonNullable<Props["onDeleteClick"]> = useCallback(() => {
     // 表示中のベージがなくなる場合はトップへ移動する
-    if (router.query.folderId === id) {
-      void router.push(pagesPath.$url());
+    if (current) {
+      void Router.push(pagesPath.$url());
     }
 
     deleteMemosWhere(x => x.folderId === id);
     deleteFolder(id);
-  }, [router, id, deleteMemosWhere, deleteFolder]);
+  }, [current, deleteMemosWhere, deleteFolder, id]);
 
   return (
     <Component
