@@ -16,7 +16,7 @@ const Container = () => {
 
   const name = "すべてのメモ";
   const count = memos.length;
-  const current = router.pathname === pagesPath.$url().pathname;
+  const current = router.pathname === pagesPath.$url().pathname && router.query.folderId == null;
   const href = pagesPath.$url();
 
   return <Component {...{ name, count, current, href }} />;

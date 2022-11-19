@@ -23,9 +23,7 @@ const Container = () => {
   const tooltipText = "作成";
   const ariaLabel = "選択中のフォルダにメモを作成する";
 
-  const disabled =
-    router.pathname !== pagesPath.folders._folderId("").$url().pathname &&
-    router.pathname !== pagesPath.$url().pathname;
+  const disabled = router.pathname !== pagesPath.$url().pathname;
 
   const onClick: NonNullable<Props["onClick"]> = useCallback(() => {
     const memoId = addMemo(folderId);

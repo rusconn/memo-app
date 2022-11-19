@@ -1,12 +1,12 @@
 import Fuse from "fuse.js";
 import type { NextPage } from "next";
-import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { MemoCards } from "@/components/common";
 import { useFolders, useMemos } from "@/contexts";
 
 export type OptionalQuery = {
+  folderId?: string;
   q?: string;
 };
 
@@ -15,9 +15,10 @@ const Page: NextPage = () => {
   const folders = useFolders();
   const allMemos = useMemos();
 
-  const { q }: OptionalQuery = router.query;
+  const { folderId, q }: OptionalQuery = router.query;
 
   const allMemosToUse = allMemos
+    .filter(memo => !folderId || memo.folderId === folderId)
     .sort((x, y) => Date.parse(y.updatedAt) - Date.parse(x.updatedAt))
     .map(memo => ({
       ...memo,
@@ -25,25 +26,19 @@ const Page: NextPage = () => {
       folderName: folders.find(folder => folder.id === memo.folderId)?.name ?? "",
     }));
 
-  const [title, memos] =
+  const memos =
     !q || q === ""
-      ? ["すべてのメモ", allMemosToUse]
-      : [
-          "検索結果",
-          new Fuse(allMemosToUse, { keys: ["content", "folderName"], threshold: 0.65 })
-            .search({ $or: [{ content: q }, { folderName: q }] })
-            .map(({ item }) => item),
-        ];
+      ? allMemosToUse
+      : new Fuse(allMemosToUse, { keys: ["content", "folderName"], threshold: 0.65 })
+          .search({ $or: [{ content: q }, { folderName: q }] })
+          .map(({ item }) => item);
+
+  const hideFolderLine = folderId != null;
 
   return (
-    <>
-      <Head>
-        <title>{title}</title>
-      </Head>
-      <div className="p-6">
-        <MemoCards {...{ memos }} />
-      </div>
-    </>
+    <div className="p-6">
+      <MemoCards {...{ memos, hideFolderLine }} />
+    </div>
   );
 };
 

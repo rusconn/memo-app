@@ -26,7 +26,7 @@ type Props = {
   content: string;
   folderName: string;
   date: string;
-  hideFolderLine?: true;
+  hideFolderLine?: boolean;
   selected: boolean;
 } & Pick<ComponentProps<"time">, "dateTime"> &
   Pick<ComponentProps<"button">, "onMouseDown" | "onDoubleClick" | "onKeyDown" | "onFocus">;
@@ -107,7 +107,7 @@ const Container = ({
   }, [selected]);
 
   const toDetail = useCallback(() => {
-    void Router.push(pagesPath.folders._folderId(folderId).memos._memoId(id).$url());
+    void Router.push(pagesPath._memoId(id).$url({ query: { folderId } }));
   }, [folderId, id]);
 
   const onMouseDown: NonNullable<Props["onMouseDown"]> = useCallback(

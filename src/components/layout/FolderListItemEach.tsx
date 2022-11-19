@@ -23,7 +23,7 @@ const Container = ({ id, name, count, editable }: ContainerProps) => {
 
   const renaming = renamingFolderId === id;
   const current = id === router.query.folderId;
-  const href = pagesPath.folders._folderId(id).$url();
+  const href = pagesPath.$url({ query: { folderId: id } });
 
   const renameInput = useMemo(() => <FolderListItemRenameInput {...{ id, name }} />, [id, name]);
 

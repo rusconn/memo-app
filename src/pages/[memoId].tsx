@@ -7,9 +7,13 @@ import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useState
 
 import { useMemos, useMemosMutation } from "@/contexts";
 
+export type Query = {
+  folderId?: string;
+};
+
 const Page: NextPage = () => {
   const { query } = useRouter();
-  const folderId = query.folderId as string | undefined;
+  const { folderId }: Query = query;
   const memoId = query.memoId as string | undefined;
 
   const memo = useMemos().find(x => x.folderId === folderId && x.id === memoId);
@@ -26,7 +30,7 @@ const Page: NextPage = () => {
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
     ({ currentTarget }) => {
-      if (!folderId || !memoId) {
+      if (!memoId) {
         return;
       }
 
@@ -40,7 +44,7 @@ const Page: NextPage = () => {
 
       setTimerId(id);
     },
-    [timerId, setContent, folderId, memoId, updateMemo]
+    [timerId, setContent, memoId, updateMemo]
   );
 
   // 上流コンポーネントによるメモの選択状態解除を避ける

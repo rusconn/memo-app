@@ -1,24 +1,14 @@
 import type { OptionalQuery as OptionalQuery0 } from "../pages";
+import type { Query as Query1 } from "../pages/[memoId]";
 
 export const pagesPath = {
-  folders: {
-    _folderId: (folderId: string | number) => ({
-      memos: {
-        _memoId: (memoId: string | number) => ({
-          $url: (url?: { hash?: string }) => ({
-            pathname: "/folders/[folderId]/memos/[memoId]" as const,
-            query: { folderId, memoId },
-            hash: url?.hash,
-          }),
-        }),
-      },
-      $url: (url?: { hash?: string }) => ({
-        pathname: "/folders/[folderId]" as const,
-        query: { folderId },
-        hash: url?.hash,
-      }),
+  _memoId: (memoId: string | number) => ({
+    $url: (url: { query: Query1; hash?: string }) => ({
+      pathname: "/[memoId]" as const,
+      query: { memoId, ...url.query },
+      hash: url.hash,
     }),
-  },
+  }),
   $url: (url?: { query?: OptionalQuery0; hash?: string }) => ({
     pathname: "/" as const,
     query: url?.query,

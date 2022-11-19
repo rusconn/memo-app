@@ -30,7 +30,7 @@ const Container = () => {
 
   const onClick: NonNullable<Props["onClick"]> = useCallback(() => {
     const id = addFolder();
-    void Router.push(pagesPath.folders._folderId(id).$url()).then(() => startRenameFolder(id));
+    void Router.push(pagesPath.$url({ query: { folderId: id } })).then(() => startRenameFolder(id));
   }, [addFolder, startRenameFolder]);
 
   return <Component {...{ label, onClick }} />;

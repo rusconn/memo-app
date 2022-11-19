@@ -18,8 +18,7 @@ const Container = () => {
   const tooltipText = "戻る";
   const ariaLabel = "前のページへ戻る";
 
-  const disabled =
-    router.pathname !== pagesPath.folders._folderId("").memos._memoId("").$url().pathname;
+  const disabled = router.pathname !== pagesPath._memoId("").$url({ query: {} }).pathname;
 
   const onClick: NonNullable<Props["onClick"]> = router.back;
 

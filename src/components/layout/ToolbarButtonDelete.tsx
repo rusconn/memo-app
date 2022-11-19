@@ -18,7 +18,7 @@ const Container = () => {
   const selectedMemoId = useSelectedMemoId();
   const { deleteMemo } = useMemosMutation();
 
-  const pathFolderId = router.query.folderId as string | undefined;
+  const queryFolderId = router.query.folderId as string | undefined;
   const pathMemoId = router.query.memoId as string | undefined;
   const deleteMemoId = selectedMemoId ?? pathMemoId;
 
@@ -30,21 +30,21 @@ const Container = () => {
 
   const onClick: NonNullable<Props["onClick"]> = useCallback(() => {
     if (deleteMemoId) {
-      const isMemoPage =
-        router.pathname === pagesPath.folders._folderId("").memos._memoId("").$url().pathname;
+      const isMemoPage = router.pathname === pagesPath._memoId("").$url({ query: {} }).pathname;
 
       // 表示中のベージがなくなる場合はフォルダへ移動する
-      if (isMemoPage && pathFolderId) {
-        void router
-          .push(pagesPath.folders._folderId(pathFolderId).$url())
-          .then(() => deleteMemo(deleteMemoId));
+      if (isMemoPage) {
+        const url = queryFolderId
+          ? pagesPath.$url({ query: { folderId: queryFolderId } })
+          : pagesPath.$url();
+        void router.push(url).then(() => deleteMemo(deleteMemoId));
       } else {
         deleteMemo(deleteMemoId);
       }
 
       clearSelectedMemoId();
     }
-  }, [clearSelectedMemoId, deleteMemoId, deleteMemo, router, pathFolderId]);
+  }, [clearSelectedMemoId, deleteMemoId, deleteMemo, router, queryFolderId]);
 
   return <Component {...{ Icon, tooltipText, ariaLabel, disabled, onClick }} />;
 };
