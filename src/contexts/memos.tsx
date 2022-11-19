@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 
+import { MAX_MEMO_CONTENT_LENGTH } from "@/config";
 import { Folder, Memo, Timestamps } from "./types";
 
 type UpdateMemoParams = Pick<Memo, "id"> & Partial<Omit<Memo, "id" | keyof Timestamps>>;
@@ -77,6 +78,10 @@ export const MemosProvider = ({ children }: PropsWithChildren) => {
 
   const updateMemo = useCallback(
     ({ id, ...rest }: UpdateMemoParams) => {
+      if (rest.content && rest.content.length > MAX_MEMO_CONTENT_LENGTH) {
+        throw new Error("content too long.");
+      }
+
       const now = new Date().toISOString();
 
       setMemosToUse(prev =>

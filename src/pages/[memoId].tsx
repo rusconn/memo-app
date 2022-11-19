@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useState } from "react";
 
+import { MAX_MEMO_CONTENT_LENGTH } from "@/config";
 import { useMemos, useMemosMutation } from "@/contexts";
 
 export type Query = {
@@ -71,6 +72,7 @@ const Page: NextPage = () => {
         </time>
         <textarea
           className="w-full flex-grow resize-none bg-inherit p-6 outline-none"
+          maxLength={MAX_MEMO_CONTENT_LENGTH}
           value={content}
           {...{ onChange }}
         />
