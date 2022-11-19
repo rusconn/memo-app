@@ -1,5 +1,4 @@
 import equal from "fast-deep-equal";
-import { useRouter } from "next/router";
 import { ComponentProps, memo, useMemo } from "react";
 
 import { useRenamingFolderId } from "@/contexts";
@@ -8,7 +7,7 @@ import FolderListItem from "./FolderListItem";
 import FolderListItemMenu from "./FolderListItemMenu";
 import FolderListItemRenameInput from "./FolderListItemRenameInput";
 
-type ContainerProps = Pick<Props, "name" | "count"> &
+type ContainerProps = Pick<Props, "name" | "count" | "current"> &
   Pick<ComponentProps<typeof FolderListItemMenu>, "id" | "editable">;
 
 type Props = ComponentProps<typeof FolderListItem>;
@@ -17,12 +16,10 @@ const StyledComponent = FolderListItem;
 
 export const Component = memo(StyledComponent, equal);
 
-const Container = ({ id, name, count, editable }: ContainerProps) => {
-  const router = useRouter();
+const Container = ({ id, name, count, current, editable }: ContainerProps) => {
   const renamingFolderId = useRenamingFolderId();
 
   const renaming = renamingFolderId === id;
-  const current = id === router.query.folderId;
   const href = pagesPath.$url({ query: { folderId: id } });
 
   const renameInput = useMemo(() => <FolderListItemRenameInput {...{ id, name }} />, [id, name]);
