@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import { MAX_MEMO_CONTENT_LENGTH } from "@/config";
+import { MAX_MEMOS_PER_FOLDER, MAX_MEMO_CONTENT_LENGTH } from "@/config";
 import { Folder, Memo, Timestamps } from "./types";
 
 type UpdateMemoParams = Pick<Memo, "id"> & Partial<Omit<Memo, "id" | keyof Timestamps>>;
@@ -57,6 +57,12 @@ export const MemosProvider = ({ children }: PropsWithChildren) => {
 
   const addMemo = useCallback(
     (id: Folder["id"]) => {
+      const folderMemos = memos.filter(x => x.folderId === id);
+
+      if (folderMemos.length >= MAX_MEMOS_PER_FOLDER) {
+        throw new Error("too many memos in the folder");
+      }
+
       const memoId = nanoid();
       const now = new Date().toISOString();
 
@@ -73,7 +79,7 @@ export const MemosProvider = ({ children }: PropsWithChildren) => {
 
       return memoId;
     },
-    [setMemosToUse]
+    [memos, setMemosToUse]
   );
 
   const updateMemo = useCallback(
