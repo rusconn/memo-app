@@ -39,6 +39,7 @@ const Container = ({ id, name }: ContainerProps) => {
   const { endRenameFolder } = useRenamingFolderIdMutation();
 
   useEffect(() => {
+    ref.current?.focus();
     ref.current?.select();
   }, []);
 
