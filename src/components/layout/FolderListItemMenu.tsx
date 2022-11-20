@@ -87,8 +87,8 @@ const Container = ({ id, editable, current }: ContainerProps) => {
       void Router.push(pagesPath.$url());
     }
 
-    deleteMemosWhere(x => x.folderId === id);
-    deleteFolder(id);
+    deleteMemosWhere(x => x.folderId === id).catch(console.error);
+    deleteFolder(id).catch(console.error);
   }, [current, deleteMemosWhere, deleteFolder, id]);
 
   return (

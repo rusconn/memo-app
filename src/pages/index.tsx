@@ -1,10 +1,11 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import Fuse from "fuse.js";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { MemoCards } from "@/components/common";
-import { useFolders, useMemos } from "@/storage";
+import { db } from "@/storage";
 
 export type OptionalQuery = {
   folderId?: string;
@@ -14,14 +15,18 @@ export type OptionalQuery = {
 const Page: NextPage = () => {
   const { isReady, query } = useRouter();
 
-  const folders = useFolders();
-  const allMemos = useMemos();
+  const folders = useLiveQuery(() => db.folders.toArray(), [], []);
+
+  const allMemos = useLiveQuery(
+    () => db.memos.toCollection().reverse().sortBy("updatedAt"),
+    [],
+    []
+  );
 
   const { folderId, q }: OptionalQuery = query;
 
   const allMemosToUse = allMemos
     .filter(memo => !folderId || memo.folderId === folderId)
-    .sort((x, y) => Date.parse(y.updatedAt) - Date.parse(x.updatedAt))
     .map(memo => ({
       ...memo,
       headline: memo.content.split("\n")[0],

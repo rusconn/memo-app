@@ -1,5 +1,6 @@
 import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
+import { useLiveQuery } from "dexie-react-hooks";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
@@ -7,7 +8,7 @@ import { useRouter } from "next/router";
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useState } from "react";
 
 import { MAX_MEMO_CONTENT_LENGTH } from "@/config";
-import { useMemos, useMemosMutation } from "@/storage";
+import { useMemosMutation, db } from "@/storage";
 
 export type Query = {
   folderId?: string;
@@ -18,7 +19,9 @@ const Page: NextPage = () => {
 
   const memoId = query.memoId as string | undefined;
 
-  const memo = useMemos().find(x => x.id === memoId);
+  // FIXME: 見つかる場合でも、見つかりませんでしたが一瞬表示されてしまう
+  const memo = useLiveQuery(() => db.memos.get(memoId ?? ""), [memoId]);
+
   const { updateMemo } = useMemosMutation();
 
   const [timerId, setTimerId] = useState<number>();
@@ -41,7 +44,7 @@ const Page: NextPage = () => {
       setContent(currentTarget.value);
 
       const id = window.setTimeout(() => {
-        updateMemo({ id: memoId, content: currentTarget.value });
+        updateMemo({ id: memoId, content: currentTarget.value }).catch(console.error);
       }, 500);
 
       setTimerId(id);

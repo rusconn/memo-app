@@ -45,7 +45,7 @@ const Container = ({ id, name }: ContainerProps) => {
 
   const tryRename = useCallback(() => {
     if (value.trim() !== "") {
-      updateFolder({ id, name: value });
+      updateFolder({ id, name: value }).catch(console.error);
     } else {
       setValue(name);
     }

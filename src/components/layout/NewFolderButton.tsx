@@ -6,7 +6,8 @@ import { TfiPlus } from "react-icons/tfi";
 import { MAX_FOLDERS } from "@/config";
 import { useRenamingFolderIdMutation } from "@/contexts";
 import { clsx, pagesPath } from "@/lib";
-import { useFolders, useFoldersMutation } from "@/storage";
+import { db, useFoldersMutation } from "@/storage";
+import { useLiveQuery } from "dexie-react-hooks";
 
 type Props = {
   label: string;
@@ -26,16 +27,20 @@ const StyledComponent = ({ label, disabled, onClick }: Props) => (
 export const Component = memo(StyledComponent);
 
 const Container = () => {
-  const folders = useFolders();
+  const numFolders = useLiveQuery(() => db.folders.count(), [], 0);
   const { addFolder } = useFoldersMutation();
   const { startRenameFolder } = useRenamingFolderIdMutation();
 
   const label = "新規フォルダ";
-  const disabled = folders.length >= MAX_FOLDERS;
+  const disabled = numFolders >= MAX_FOLDERS;
 
   const onClick: NonNullable<Props["onClick"]> = useCallback(() => {
-    const id = addFolder();
-    void Router.push(pagesPath.$url({ query: { folderId: id } })).then(() => startRenameFolder(id));
+    (async () => {
+      const id = await addFolder();
+      void Router.push(pagesPath.$url({ query: { folderId: id } })).then(() =>
+        startRenameFolder(id)
+      );
+    })().catch(console.error);
   }, [addFolder, startRenameFolder]);
 
   return <Component {...{ label, disabled, onClick }} />;

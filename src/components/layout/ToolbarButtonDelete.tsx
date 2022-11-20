@@ -39,11 +39,10 @@ const Container = () => {
         const url = queryFolderId
           ? pagesPath.$url({ query: { folderId: queryFolderId } })
           : pagesPath.$url();
-        void router.push(url).then(() => deleteMemo(deleteMemoId));
-      } else {
-        deleteMemo(deleteMemoId);
+        void router.push(url);
       }
 
+      deleteMemo(deleteMemoId).catch(console.error);
       clearSelectedMemoId();
     }
   }, [clearSelectedMemoId, deleteMemoId, deleteMemo, router, queryFolderId]);

@@ -37,6 +37,12 @@
     "no-void": ["error", { "allowAsStatement": true }],
     // コンポーネントはアロー関数で書く
     "react/function-component-definition": ["error", { "namedComponents": "arrow-function" }],
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "useLiveQuery"
+      }
+    ]
   }
 }

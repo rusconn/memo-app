@@ -1,10 +1,11 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import equal from "fast-deep-equal";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ComponentProps, memo } from "react";
 
 import { pagesPath } from "@/lib";
-import { useFolders, useMemos } from "@/storage";
+import { db } from "@/storage";
 import FolderListItemAll from "./FolderListItemAll";
 import FolderListItemEach from "./FolderListItemEach";
 
@@ -26,18 +27,32 @@ export const Component = memo(StyledComponent, equal);
 
 const Container = () => {
   const router = useRouter();
-  const folders = useFolders();
-  const memos = useMemos();
 
   const allCurrent = router.pathname === pagesPath.$url().pathname && router.query.folderId == null;
 
-  const foldersToUse = folders.map(({ id, name, editable }) => ({
-    id,
-    name,
-    count: memos.filter(({ folderId }) => folderId === id).length,
-    current: id === router.query.folderId,
-    editable,
-  }));
+  const folders = useLiveQuery(
+    async () => {
+      const fs = await db.folders.toCollection().reverse().sortBy("createdAt");
+
+      const counts = await Promise.all(
+        fs.map(f => db.memos.where("folderId").equals(f.id).count())
+      );
+
+      return fs.map((f, i) => ({ ...f, count: counts[i] }));
+    },
+    [],
+    []
+  );
+
+  const foldersToUse = folders
+    .sort((x, y) => Number(x.editable) - Number(y.editable))
+    .map(({ id, name, count, editable }) => ({
+      id,
+      name,
+      count,
+      current: id === router.query.folderId,
+      editable,
+    }));
 
   return <Component {...{ allCurrent }} folders={foldersToUse} />;
 };

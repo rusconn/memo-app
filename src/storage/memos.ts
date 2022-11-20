@@ -1,82 +1,48 @@
 import { nanoid } from "nanoid";
 import { useCallback } from "react";
-import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
 
 import { MAX_MEMOS_PER_FOLDER, MAX_MEMO_CONTENT_LENGTH } from "@/config";
+import { db } from "./db";
 import { Folder, Memo, Timestamps } from "./types";
 
 type UpdateMemoParams = Pick<Memo, "id"> & Partial<Omit<Memo, "id" | keyof Timestamps>>;
 
-const MEMOS_KEY = "memos";
-
-export const useMemos = () => useReadLocalStorage<Memo[]>(MEMOS_KEY) ?? [];
-
 export const useMemosMutation = () => {
-  const [memos, setMemos] = useLocalStorage<Memo[]>(MEMOS_KEY, []);
+  const addMemo = useCallback(async (id: Folder["id"]) => {
+    const numFolderMemos = await db.memos.where("folderId").equals(id).count();
 
-  const addMemo = useCallback(
-    (id: Folder["id"]) => {
-      const folderMemos = memos.filter(x => x.folderId === id);
+    if (numFolderMemos >= MAX_MEMOS_PER_FOLDER) {
+      throw new Error("too many memos in the folder");
+    }
 
-      if (folderMemos.length >= MAX_MEMOS_PER_FOLDER) {
-        throw new Error("too many memos in the folder");
-      }
+    const now = new Date().toISOString();
 
-      const memoId = nanoid();
-      const now = new Date().toISOString();
+    return db.memos.add({
+      id: nanoid(),
+      content: "",
+      folderId: id,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }, []);
 
-      setMemos(prev => [
-        {
-          id: memoId,
-          content: "",
-          folderId: id,
-          createdAt: now,
-          updatedAt: now,
-        },
-        ...prev,
-      ]);
+  const updateMemo = useCallback(async ({ id, ...rest }: UpdateMemoParams) => {
+    if (rest.content && rest.content.length > MAX_MEMO_CONTENT_LENGTH) {
+      throw new Error("content too long.");
+    }
 
-      return memoId;
-    },
-    [memos, setMemos]
-  );
+    const now = new Date().toISOString();
 
-  const updateMemo = useCallback(
-    ({ id, ...rest }: UpdateMemoParams) => {
-      if (rest.content && rest.content.length > MAX_MEMO_CONTENT_LENGTH) {
-        throw new Error("content too long.");
-      }
+    return db.memos.update(id, { ...rest, updatedAt: now });
+  }, []);
 
-      const now = new Date().toISOString();
+  const deleteMemo = useCallback(async (id: Memo["id"]) => {
+    return db.memos.delete(id);
+  }, []);
 
-      setMemos(prev =>
-        prev.map(memo =>
-          memo.id === id
-            ? {
-                ...memo,
-                ...rest,
-                updatedAt: now,
-              }
-            : memo
-        )
-      );
-    },
-    [setMemos]
-  );
-
-  const deleteMemo = useCallback(
-    (id: Memo["id"]) => {
-      setMemos(prev => prev.filter(memo => memo.id !== id));
-    },
-    [setMemos]
-  );
-
-  const deleteMemosWhere = useCallback(
-    (f: (_: Memo) => boolean) => {
-      setMemos(prev => prev.filter(memo => !f(memo)));
-    },
-    [setMemos]
-  );
+  const deleteMemosWhere = useCallback(async (f: (_: Memo) => boolean) => {
+    return db.memos.filter(memo => f(memo)).delete();
+  }, []);
 
   return {
     addMemo,

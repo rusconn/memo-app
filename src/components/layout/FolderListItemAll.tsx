@@ -1,9 +1,10 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import equal from "fast-deep-equal";
 import dynamic from "next/dynamic";
 import { ComponentProps, memo } from "react";
 
 import { pagesPath } from "@/lib";
-import { useMemos } from "@/storage";
+import { db } from "@/storage";
 import FolderListItem from "./FolderListItem";
 
 type ContainerProps = Pick<Props, "current">;
@@ -15,10 +16,9 @@ const StyledComponent = FolderListItem;
 export const Component = memo(StyledComponent, equal);
 
 const Container = ({ current }: ContainerProps) => {
-  const memos = useMemos();
+  const count = useLiveQuery(() => db.memos.count(), [], 0);
 
   const name = "すべてのメモ";
-  const count = memos.length;
   const href = pagesPath.$url();
 
   return <Component {...{ name, count, current, href }} />;

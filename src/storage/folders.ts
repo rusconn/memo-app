@@ -1,73 +1,40 @@
 import { nanoid } from "nanoid";
 import { useCallback } from "react";
-import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
 
 import { MAX_FOLDERS } from "@/config";
+import { db } from "./db";
 import { Folder, Timestamps } from "./types";
 
 type UpdateFolderParams = Pick<Folder, "id"> & Partial<Omit<Folder, "id" | keyof Timestamps>>;
 
-const FOLDERS_KEY = "folders";
-
-const defaultFolder: Folder = {
-  id: "memo",
-  name: "メモ",
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  editable: false,
-};
-
-export const useFolders = () => useReadLocalStorage<Folder[]>(FOLDERS_KEY) ?? [defaultFolder];
-
 export const useFoldersMutation = () => {
-  const [folders, setFolders] = useLocalStorage(FOLDERS_KEY, [defaultFolder]);
+  const addFolder = useCallback(async () => {
+    const numFolders = await db.folders.count();
 
-  const addFolder = useCallback(() => {
-    if (folders.length >= MAX_FOLDERS) {
+    if (numFolders >= MAX_FOLDERS) {
       throw new Error("too many folders.");
     }
 
-    const id = nanoid();
     const now = new Date().toISOString();
 
-    const newFolder: Folder = {
-      id,
+    return db.folders.add({
+      id: nanoid(),
       name: "新規フォルダ",
       editable: true,
       createdAt: now,
       updatedAt: now,
-    };
+    });
+  }, []);
 
-    setFolders(([defaultMemoFolder, ...rest]) => [defaultMemoFolder, newFolder, ...rest]);
+  const updateFolder = useCallback(async ({ id, ...rest }: UpdateFolderParams) => {
+    const now = new Date().toISOString();
 
-    return id;
-  }, [folders.length, setFolders]);
+    return db.folders.update(id, { ...rest, updatedAt: now });
+  }, []);
 
-  const updateFolder = useCallback(
-    ({ id, ...rest }: UpdateFolderParams) => {
-      const now = new Date().toISOString();
-
-      setFolders(prev =>
-        prev.map(folder =>
-          folder.id === id
-            ? {
-                ...folder,
-                ...rest,
-                updatedAt: now,
-              }
-            : folder
-        )
-      );
-    },
-    [setFolders]
-  );
-
-  const deleteFolder = useCallback(
-    (id: Folder["id"]) => {
-      setFolders(prev => prev.filter(folder => folder.id !== id));
-    },
-    [setFolders]
-  );
+  const deleteFolder = useCallback(async (id: Folder["id"]) => {
+    return db.folders.delete(id);
+  }, []);
 
   return {
     addFolder,
