@@ -1,9 +1,10 @@
 import Fuse from "fuse.js";
 import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
 import { MemoCards } from "@/components/common";
-import { useFolders, useMemos } from "@/contexts";
+import { useFolders, useMemos } from "@/storage";
 
 export type OptionalQuery = {
   folderId?: string;
@@ -42,4 +43,4 @@ const Page: NextPage = () => {
   );
 };
 
-export default Page;
+export default dynamic(Promise.resolve(Page), { ssr: false });

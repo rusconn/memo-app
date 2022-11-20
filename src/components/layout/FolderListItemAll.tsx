@@ -1,8 +1,9 @@
 import equal from "fast-deep-equal";
+import dynamic from "next/dynamic";
 import { ComponentProps, memo } from "react";
 
-import { useMemos } from "@/contexts";
 import { pagesPath } from "@/lib";
+import { useMemos } from "@/storage";
 import FolderListItem from "./FolderListItem";
 
 type ContainerProps = Pick<Props, "current">;
@@ -23,4 +24,4 @@ const Container = ({ current }: ContainerProps) => {
   return <Component {...{ name, count, current, href }} />;
 };
 
-export default memo(Container);
+export default dynamic(Promise.resolve(memo(Container)), { ssr: false });

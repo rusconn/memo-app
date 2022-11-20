@@ -1,12 +1,13 @@
 import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
 import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useState } from "react";
 
 import { MAX_MEMO_CONTENT_LENGTH } from "@/config";
-import { useMemos, useMemosMutation } from "@/contexts";
+import { useMemos, useMemosMutation } from "@/storage";
 
 export type Query = {
   folderId?: string;
@@ -81,4 +82,4 @@ const Page: NextPage = () => {
   );
 };
 
-export default Page;
+export default dynamic(Promise.resolve(Page), { ssr: false });

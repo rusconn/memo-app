@@ -1,10 +1,12 @@
+import dynamic from "next/dynamic";
 import Router from "next/router";
 import { ComponentProps, memo, useCallback } from "react";
 import { TfiPlus } from "react-icons/tfi";
 
 import { MAX_FOLDERS } from "@/config";
-import { useFolders, useFoldersMutation, useRenamingFolderIdMutation } from "@/contexts";
+import { useRenamingFolderIdMutation } from "@/contexts";
 import { clsx, pagesPath } from "@/lib";
+import { useFolders, useFoldersMutation } from "@/storage";
 
 type Props = {
   label: string;
@@ -39,4 +41,4 @@ const Container = () => {
   return <Component {...{ label, disabled, onClick }} />;
 };
 
-export default memo(Container);
+export default dynamic(Promise.resolve(memo(Container)), { ssr: false });

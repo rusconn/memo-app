@@ -1,10 +1,12 @@
+import dynamic from "next/dynamic";
 import Router from "next/router";
 import { ComponentProps, ForwardedRef, forwardRef, memo, useCallback, useRef } from "react";
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useBoolean, useOnClickOutside } from "usehooks-ts";
 
-import { useFoldersMutation, useMemosMutation, useRenamingFolderIdMutation } from "@/contexts";
+import { useRenamingFolderIdMutation } from "@/contexts";
 import { clsx, pagesPath } from "@/lib";
+import { useFoldersMutation, useMemosMutation } from "@/storage";
 import FolderListItemMenuButton from "./FolderListItemMenuButton";
 
 type ContainerProps = {
@@ -105,4 +107,4 @@ const Container = ({ id, editable, current }: ContainerProps) => {
   );
 };
 
-export default memo(Container);
+export default dynamic(Promise.resolve(memo(Container)), { ssr: false });

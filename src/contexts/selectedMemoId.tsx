@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import { Memo } from "./types";
+import { Memo } from "@/storage";
 
 const SelectedMemoIdContext = createContext<Memo["id"] | null>(null);
 

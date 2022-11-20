@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { Folder } from "./types";
+import { Folder } from "@/storage";
 
 const RenamingFolderIdContext = createContext<Folder["id"] | null>(null);
 

@@ -1,9 +1,10 @@
 import equal from "fast-deep-equal";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ComponentProps, memo } from "react";
 
-import { useFolders, useMemos } from "@/contexts";
 import { pagesPath } from "@/lib";
+import { useFolders, useMemos } from "@/storage";
 import FolderListItemAll from "./FolderListItemAll";
 import FolderListItemEach from "./FolderListItemEach";
 
@@ -41,4 +42,4 @@ const Container = () => {
   return <Component {...{ allCurrent }} folders={foldersToUse} />;
 };
 
-export default memo(Container);
+export default dynamic(Promise.resolve(memo(Container)), { ssr: false });

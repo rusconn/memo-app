@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import {
   ComponentProps,
   ForwardedRef,
@@ -9,7 +10,8 @@ import {
   useState,
 } from "react";
 
-import { useRenamingFolderIdMutation, useFoldersMutation } from "@/contexts";
+import { useRenamingFolderIdMutation } from "@/contexts";
+import { useFoldersMutation } from "@/storage";
 
 type ContainerProps = {
   id: string;
@@ -68,4 +70,4 @@ const Container = ({ id, name }: ContainerProps) => {
   return <Component {...{ value, onChange, onKeyDown, onBlur, ref }} />;
 };
 
-export default memo(Container);
+export default dynamic(Promise.resolve(memo(Container)), { ssr: false });

@@ -1,10 +1,12 @@
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ComponentProps, memo, useCallback } from "react";
 import { TfiPencil } from "react-icons/tfi";
 
 import { MAX_MEMOS_PER_FOLDER } from "@/config";
-import { useMemos, useMemosMutation, useSelectedMemoIdMutation } from "@/contexts";
+import { useSelectedMemoIdMutation } from "@/contexts";
 import { pagesPath } from "@/lib";
+import { useMemos, useMemosMutation } from "@/storage";
 import ToolbarButton from "./ToolbarButton";
 
 type Props = ComponentProps<typeof ToolbarButton>;
@@ -37,4 +39,4 @@ const Container = () => {
   return <Component {...{ Icon, tooltipText, ariaLabel, disabled, onClick }} />;
 };
 
-export default memo(Container);
+export default dynamic(Promise.resolve(memo(Container)), { ssr: false });
