@@ -16,10 +16,9 @@ export type Query = {
 const Page: NextPage = () => {
   const { isReady, query } = useRouter();
 
-  const { folderId }: Query = query;
   const memoId = query.memoId as string | undefined;
 
-  const memo = useMemos().find(x => x.folderId === folderId && x.id === memoId);
+  const memo = useMemos().find(x => x.id === memoId);
   const { updateMemo } = useMemosMutation();
 
   const [timerId, setTimerId] = useState<number>();
