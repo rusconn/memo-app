@@ -12,11 +12,12 @@ export type OptionalQuery = {
 };
 
 const Page: NextPage = () => {
-  const router = useRouter();
+  const { isReady, query } = useRouter();
+
   const folders = useFolders();
   const allMemos = useMemos();
 
-  const { folderId, q }: OptionalQuery = router.query;
+  const { folderId, q }: OptionalQuery = query;
 
   const allMemosToUse = allMemos
     .filter(memo => !folderId || memo.folderId === folderId)
@@ -35,6 +36,10 @@ const Page: NextPage = () => {
           .map(({ item }) => item);
 
   const hideFolderLine = folderId != null;
+
+  if (!isReady) {
+    return <p className="p-6">ロード中…</p>;
+  }
 
   return (
     <div className="p-6">

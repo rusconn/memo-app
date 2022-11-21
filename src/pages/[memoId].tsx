@@ -14,7 +14,8 @@ export type Query = {
 };
 
 const Page: NextPage = () => {
-  const { query } = useRouter();
+  const { isReady, query } = useRouter();
+
   const { folderId }: Query = query;
   const memoId = query.memoId as string | undefined;
 
@@ -54,7 +55,7 @@ const Page: NextPage = () => {
     e.stopPropagation();
   }, []);
 
-  if (!memoId) {
+  if (!isReady) {
     return <p className="p-6">ロード中…</p>;
   }
 
