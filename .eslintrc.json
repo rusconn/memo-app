@@ -16,7 +16,13 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": ["tailwindcss"],
+  "plugins": ["tailwindcss", "testing-library"],
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*.[jt]s?(x)"],
+      "extends": ["plugin:testing-library/react"]
+    }
+  ],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-unused-vars": [
