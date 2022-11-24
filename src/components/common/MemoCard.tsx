@@ -63,7 +63,7 @@ const StyledComponent = (
       <span className="inline-block h-[125%] w-[125%] origin-top-left scale-[0.8]">{content}</span>
     </span>
     <span className="flex w-full flex-col whitespace-nowrap text-center">
-      <span className="w-full overflow-hidden overflow-ellipsis text-xs">{headline}</span>
+      <span className="w-full overflow-hidden text-ellipsis text-xs">{headline}</span>
       <time className="w-full opacity-60" {...{ dateTime }} suppressHydrationWarning>
         {date}
       </time>
@@ -73,8 +73,8 @@ const StyledComponent = (
           hideFolderLine && "invisible"
         )}
       >
-        <TfiFolder className="h-3 w-3 flex-shrink-0" />
-        <span className="overflow-hidden overflow-ellipsis">{folderName}</span>
+        <TfiFolder className="h-3 w-3 shrink-0" />
+        <span className="overflow-hidden text-ellipsis">{folderName}</span>
       </span>
     </span>
   </button>

@@ -72,7 +72,7 @@ const Page: NextPage = () => {
           {format(parseISO(memo.updatedAt), "yyyy年MM月dd日 HH:mm")}
         </time>
         <textarea
-          className="w-full flex-grow resize-none bg-inherit p-6 outline-none"
+          className="w-full grow resize-none bg-inherit p-6 outline-none"
           maxLength={MAX_MEMO_CONTENT_LENGTH}
           value={content}
           {...{ onChange }}

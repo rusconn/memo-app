@@ -15,7 +15,7 @@ const StyledComponent = ({ value, placeholder, onChange }: Props) => (
     <TfiSearch className="h-fit w-fit p-1" />
     <input
       id="search-memo"
-      className="flex-grow bg-inherit focus:outline-none dark:placeholder-stone-500"
+      className="grow bg-inherit focus:outline-none dark:placeholder:text-stone-500"
       {...{ value, placeholder, onChange }}
     />
   </label>

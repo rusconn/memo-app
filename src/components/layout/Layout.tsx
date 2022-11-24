@@ -16,12 +16,12 @@ const StyledComponent = ({ children, onMouseDown, onToolbarMouseDown }: Props) =
     <div className="w-64 bg-gray-100 dark:bg-stone-800">
       <Sidebar />
     </div>
-    <main className="flex h-full flex-grow flex-col overflow-x-hidden bg-white dark:bg-stone-900">
+    <main className="flex h-full grow flex-col overflow-x-hidden bg-white dark:bg-stone-900">
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div className="pr-2" onMouseDown={onToolbarMouseDown}>
         <Toolbar />
       </div>
-      <section className="flex-grow overflow-x-hidden overflow-y-scroll">{children}</section>
+      <section className="grow overflow-x-hidden overflow-y-scroll">{children}</section>
     </main>
   </div>
 );

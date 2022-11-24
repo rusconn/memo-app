@@ -9,7 +9,7 @@ const StyledComponent = () => (
     <header className="p-4">
       <AppNameLink />
     </header>
-    <section className="flex-grow overflow-x-hidden overflow-y-scroll p-2">
+    <section className="grow overflow-x-hidden overflow-y-scroll p-2">
       <FolderList />
     </section>
     <section className="flex justify-start p-4">

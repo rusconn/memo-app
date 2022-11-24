@@ -34,13 +34,11 @@ const StyledComponent = ({ name, count, current, renameInput, menu, href }: Prop
         <span className="flex h-5 w-48">
           <TfiFolder
             className={clsx(
-              "h-4 w-4 flex-shrink-0",
+              "h-4 w-4 shrink-0",
               current ? "dark:text-stone-200" : "text-yellow-500 dark:text-yellow-500"
             )}
           />
-          {!renameInput && (
-            <span className="flex-grow overflow-hidden overflow-ellipsis px-2">{name}</span>
-          )}
+          {!renameInput && <span className="grow overflow-hidden text-ellipsis px-2">{name}</span>}
         </span>
         <span className={clsx("text-right font-mono", current ? "opacity-100" : "opacity-50")}>
           {count}
