@@ -21,7 +21,6 @@ const Page: NextPage = () => {
   const memo = useMemos().find(x => x.id === memoId);
   const { updateMemo } = useMemosMutation();
 
-  const [timerId, setTimerId] = useState<number>();
   const [content, setContent] = useState("");
 
   useEffect(() => {
@@ -36,17 +35,10 @@ const Page: NextPage = () => {
         return;
       }
 
-      window.clearTimeout(timerId);
-
       setContent(currentTarget.value);
-
-      const id = window.setTimeout(() => {
-        updateMemo({ id: memoId, content: currentTarget.value });
-      }, 500);
-
-      setTimerId(id);
+      updateMemo({ id: memoId, content: currentTarget.value });
     },
-    [timerId, setContent, memoId, updateMemo]
+    [setContent, memoId, updateMemo]
   );
 
   // 上流コンポーネントによるメモの選択状態解除を避ける
